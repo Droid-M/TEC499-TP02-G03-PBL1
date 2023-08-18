@@ -50,10 +50,28 @@ int main()
     // Configurar a porta serial com baud rate de 9600
     configureSerialPort(fd, B9600);
 
+    //Enviando sinal de start
+    // Valor estático a ser enviado como start bit (0x00)
+    unsigned char start_bit = 0x00;
+
+    // Enviar o valor estático como start bit
+    write(fd, &start_bit, 1);
+
     char data[] = "Hello world!";
 
     // Enviar os dados para a porta serial
     write(fd, data, strlen(data));
+
+    // Aguardar um atraso antes de ler a resposta
+    usleep(100000); // Atraso de 100 milissegundos
+
+    // Receber dados da porta serial
+    char buffer[256];
+    int numBytes = read(fd, buffer, sizeof(buffer));
+    if (numBytes > 0) {
+        buffer[numBytes] = '\0';
+        printf("Dados recebidos: %s\n", buffer);
+    }
 
     // Fechar a porta serial
     close(fd);
