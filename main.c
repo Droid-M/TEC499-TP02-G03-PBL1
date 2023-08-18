@@ -39,7 +39,7 @@ void configureSerialPort(int fd, speed_t baud_rate)
 int main()
 {
     int fd;
-    fd = open("/dev/ttyUSB0", O_RDWR); // Substitua pelo dispositivo correto (ex: /dev/ttyS0)
+    fd = open("/dev/ttyS0", O_RDWR); // Substitua pelo dispositivo correto (ex: /dev/ttyUSB0)
 
     if (fd == -1)
     {
@@ -57,7 +57,7 @@ int main()
     // Enviar o valor estático como start bit
     write(fd, &start_bit, 1);
 
-    char data[] = "Hello world!";
+    char data[] = "H";
 
     // Enviar os dados para a porta serial
     write(fd, data, strlen(data));
