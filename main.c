@@ -51,8 +51,8 @@ int main()
     configureSerialPort(fd, B9600);
 
     //Enviando sinal de start
-    // Valor estático a ser enviado como start bit (0x00)
-    unsigned char start_bit = 0x00;
+    // Valor estático a ser enviado como start bit (0)
+    unsigned char start_bit = 0;
 
     // Enviar o valor estático como start bit
     write(fd, &start_bit, 1);
@@ -66,7 +66,7 @@ int main()
     usleep(100000); // Atraso de 100 milissegundos
 
     // Receber dados da porta serial
-    char buffer[256];
+    char buffer[32];
     int numBytes = read(fd, buffer, sizeof(buffer));
     if (numBytes > 0) {
         buffer[numBytes] = '\0';
