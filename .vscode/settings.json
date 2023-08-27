@@ -6,7 +6,9 @@
         "stdlib.h": "c",
         "stdio.h": "c",
         "input_helpers.h": "c",
-        "helpers.h": "c"
+        "helpers.h": "c",
+        "fcntl.h": "c",
+        "models.h": "c"
     },
     "cSpell.words": [
         "kbhit"

@@ -9,4 +9,6 @@ struct Sensor {
     float humidity;
 };
 
+int select_sensor_value(struct Sensor sensor);
+
 #endif
