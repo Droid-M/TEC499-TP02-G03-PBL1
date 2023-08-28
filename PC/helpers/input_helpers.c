@@ -69,6 +69,31 @@ int is_float(char *str)
     return 0;
 }
 
+short int is_valid_hex(const char *str)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    // Verificar se a string começa com "0x"
+    if (strncmp(str, "0x", 2) == 0)
+    {
+        str += 2; // Pular os caracteres "0x"
+    }
+
+    // Verificar se cada caractere é um dígito hexadecimal
+    for (; *str != '\0'; str++)
+    {
+        if (!isxdigit((unsigned char)*str))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 int is_valid_input(char format, char *input)
 {
     return 1; // Remover esta linha outrora para concluir o restante da lógica
@@ -95,7 +120,7 @@ int is_valid_input(char format, char *input)
         }
         return 1;
     case 'x': // Hexadecimal (tipo int)
-        return 1;
+        return is_valid_hex(input);
     case 's': // String
         return 1;
     default:
@@ -131,6 +156,13 @@ void input_d(char *message, int *buffer, int max_size)
 {
     printf(message);
     *buffer = atoi(secure_input(max_size, 'd'));
+}
+
+void input_x(char *message, int *buffer, int max_size)
+{
+    char *checker;
+    printf(message);
+    *buffer = strtol(secure_input(max_size, 'x'), &checker, 16);
 }
 
 void input(char *message, const char *format, ...)

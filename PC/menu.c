@@ -8,6 +8,8 @@
 #define H 0x48 // 72 em decimal
 #define h 0x68 // 104 em decimal
 
+struct Sensor sensors[32];
+
 void show_sensor_commands()
 {
     printf("Código: 0x00 ---- Comando: Situação atual do sensor\n");
@@ -22,26 +24,30 @@ void show_sensor_commands()
 int manage_sensor_menu()
 {
     unsigned int sensor_address;
-    unsigned int sensor_command;
+    unsigned int sensor_command = 0;
     // input("Informe o endereço do sensor (entre 1 e 32):", "%x", &sensor_address);
-    input_d("Informe o endereço do sensor (entre 1 e 32):", &sensor_address, 16);
+    input_x("Informe o endereço do sensor (entre 1 e 32):", &sensor_address, 16);
     if (sensor_address < 0x01 || sensor_address > 0x20)
     {
-        fprintf(stderr, "Opção inválida! Retornando ao menu anterior...\n\n\n");
+        fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
+        skip_lines(8, 0, "");
         return 1;
     }
     do
     {
         if (sensor_command == H || sensor_command == h)
             show_sensor_commands();
-        input_d("Informe o comando a ser enviado ao sensor (ou, insira H para visualizar a lista de comandos disponíveis):", &sensor_command, 16);
+        input_x("Informe o comando a ser enviado ao sensor (ou, insira '0x48' sem aspas para visualizar a lista de comandos disponíveis):", &sensor_command, 16);
         if (sensor_command != H && sensor_command != h && (sensor_command < 0x01 || sensor_command > 0x06))
         {
-            fprintf(stderr, "Opção inválida! Retornando ao menu anterior...\n\n\n");
+            printf("Selecionou: %x\n\n", sensor_command);
+            fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
+            skip_lines(8, 0, "");
             return 1;
         }
     } while (sensor_command == H || sensor_command == h);
 
+    printf("Endereço2: %d ---- Comando2: %d", (sensor_address), (sensor_command));
     manage_sensor(sensor_address, sensor_command);
     return 0;
 }
@@ -72,6 +78,8 @@ void menu()
 
 int main()
 {
+    open_connection();
     menu();
+    close_connection();
     return 0;
 }

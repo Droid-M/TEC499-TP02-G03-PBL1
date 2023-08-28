@@ -5,10 +5,9 @@
 #include <unistd.h>
 #include <locale.h>
 
-void menu()
+void reader(struct Sensor *sensors)
 {
     setlocale(LC_ALL, "Portuguese"); // Configuração regional para o português brasileiro em UTF-8
-    struct Sensor sensors[32];
     slowed_printf("Sistema de gestão de sensoriamento - Versão 1.0", 0.2);
     skip_lines(5, 1, ".");
     while(!key_has_pressed()) {

@@ -40,23 +40,33 @@ void skip_lines(int qty, int delay_per_line, char *line_content)
 }
 
 #ifdef _WIN32
-// void log(const char *to_output, ...)
-// {
-//     va_list args;
-//     va_start(args, to_output);
-//     size_t len = strlen(to_output);
-//     wchar_t wformat[len + 1];
-//     mbstowcs(wformat, to_output, len + 1);
-//     wprintf(wformat, args);
-//     va_end(args);
-// }
+void c_log(const char *to_output, ...)
+{
+    va_list args;
+    va_start(args, to_output);
+    size_t len = strlen(to_output);
+    wchar_t wformat[len + 1];
+    mbstowcs(wformat, to_output, len + 1);
+    wprintf(wformat, args);
+    va_end(args);
+}
+
+void clear_console()
+{
+    system("cls");
+}
 
 #else
-// void log(const char *to_output, ...)
-// {
-//     va_list args;
-//     va_start(args, to_output);
-//     vprintf(to_output, args);
-//     va_end(args);
-// }
+void c_log(const char *to_output, ...)
+{
+    va_list args;
+    va_start(args, to_output);
+    vprintf(to_output, args);
+    va_end(args);
+}
+
+void clear_console()
+{
+    system("clear");
+}
 #endif
