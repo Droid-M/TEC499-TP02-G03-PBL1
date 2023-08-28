@@ -10,5 +10,5 @@ struct Sensor {
 };
 
 int select_sensor_value(struct Sensor sensor);
-
+void manage_sensor(unsigned int address, unsigned int command);
 #endif

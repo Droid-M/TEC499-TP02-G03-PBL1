@@ -11,3 +11,8 @@ int select_sensor_value(struct Sensor sensor)
         break;
     }
 }
+
+void manage_sensor(unsigned int address, unsigned int command)
+{
+    printf(address, command);
+}
