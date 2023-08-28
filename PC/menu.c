@@ -47,8 +47,28 @@ int manage_sensor_menu()
         }
     } while (sensor_command == H || sensor_command == h);
 
-    printf("Endereço2: %d ---- Comando2: %d", (sensor_address), (sensor_command));
-    manage_sensor(sensor_address, sensor_command);
+    register_command(sensor_address, sensor_command);
+
+    switch (sensor_command)
+    {
+        case 0x00:
+            get_sensor_situation(sensors[sensor_address]);
+            if (sensors[sensor_address].working)
+                printf("Situação do sensor #%d: FUNCIONANDO NORMALMENTE :)", sensors[sensor_address].address);
+            else
+                printf("Situação do sensor #%d: COM PROBLEMAS :(", sensors[sensor_address].address);
+            break;
+        case 0x01:
+            get_sensor_temperature(sensors[sensor_address]);
+            printf("Temperatura do sensor #%d: %.3f°C", sensors[sensor_address].address, sensors[sensor_address].temperature);
+            break;
+        case 0x02:
+            get_sensor_humidity(sensors[sensor_address]);
+            printf("Umidade do sensor #%d: %.2f%", sensors[sensor_address].address, sensors[sensor_address].humidity);
+            break;
+        case 0x03:
+            break;
+    }
     return 0;
 }
 

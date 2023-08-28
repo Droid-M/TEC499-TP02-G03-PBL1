@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int hex_to_decimal(int hex_value)
 {
@@ -16,4 +17,11 @@ int hex_to_decimal(int hex_value)
     }
 
     return decimal;
+}
+
+float build_float(int integer, int decimal)
+{
+    int digits_qty = (int)log10(decimal) + 1; // Conta o número de dígitos na parte decimal
+    float divisor = pow(10, digits_qty);
+    return (float)integer + ((float)decimal / divisor);
 }

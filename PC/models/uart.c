@@ -7,18 +7,25 @@
 
 int fd;
 
-void open_connection()
+int open_connection()
 {
     fd = open("/dev/ttyS0", O_RDWR); // Substitua pelo dispositivo correto (ex: /dev/ttyUSB0)
 
     if (fd == -1)
     {
         perror("Erro ao abrir a porta serial");
-        return 1;
+        return 0;
     }
 
     // Configurar a porta serial com baud rate de 9600
     configure_serial_port(fd, B9600);
+    return 1;
+}
+
+void close_connection()
+{
+    // Fechar a porta serial
+    close(fd);
 }
 
 void configure_serial_port(int fd, speed_t baud_rate)
@@ -32,22 +39,7 @@ void configure_serial_port(int fd, speed_t baud_rate)
     cfsetispeed(&options, baud_rate);
     cfsetospeed(&options, baud_rate);
 
-    // Configurar opções da porta serial: 8 bits de dados, sem paridade, 1 stop bit
-
-    // Desabilita a paridade (parity enable bit) na configuração da porta serial
-    options.c_cflag &= ~PARENB;
-
-    // Define um único bit de parada (stop bit) na configuração da porta serial
-    options.c_cflag &= ~CSTOPB;
-
-    // Limpa os bits de tamanho de caractere (character size bits) na configuração da porta serial
-    options.c_cflag &= ~CSIZE;
-
-    // Define o tamanho do caractere como 8 bits na configuração da porta serial
-    options.c_cflag |= CS8;
-
-    // Habilita a capacidade de leitura (recebimento) de dados na configuração da porta serial
-    options.c_cflag |= CREAD;
+    // Configurar opções da porta serial...
 
     // Definir as configurações da porta serial
     tcsetattr(fd, TCSANOW, &options);
@@ -57,39 +49,42 @@ void tx_char(char *data)
 {
     unsigned char start_bit = 0;
     write(fd, &start_bit, 1);
-    write(fd, data, strlen(&data));
+    write(fd, data, strlen(data));
 }
 
 void tx_hex(unsigned int hex_value)
 {
     uint8_t data = (uint8_t)hex_value;
     unsigned char start_bit = 0;
+    usleep(200000);
     write(fd, &start_bit, 1);
-    write(fd, data, strlen(&data));
+    write(fd, &data, sizeof(data));
 }
 
-void can_start_protocol()
+char rx_char()
 {
-    
-}
+    char buffer[1]; // Buffer para armazenar o byte lido
 
-char *rx_char()
-{
-    // Aguardar um atraso antes de ler a resposta
+    // Aguardar um atraso antes de ler o byte
     usleep(200000); // Recomendado: Atraso de 200 milissegundos
 
     // Receber dados da porta serial
-    char buffer[32];
     int numBytes = read(fd, buffer, sizeof(buffer));
-    if (numBytes > 0)
+
+    if (numBytes == 1)
     {
-        buffer[numBytes] = '\0';
+        return buffer[0]; // Retornar o byte lido
     }
-    return buffer;
+    else
+    {
+        return '\0'; // Retorna caractere nulo se ocorrer um erro
+    }
 }
 
-void close_connection()
+int rx_int()
 {
-    // Fechar a porta serial
-    close(fd);
+    char byte_rx = rx_char();
+    if (byte_rx == '\0')
+        return -1;
+    return (int)byte_rx;
 }

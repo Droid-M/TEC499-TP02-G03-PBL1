@@ -11,4 +11,5 @@ void input_x(char *message, int *buffer, int max_size);
 void clear_input_buffer();
 void clear_console();
 int hex_to_decimal(int hex_value);
+float build_float(int integer, int decimal);
 #endif
