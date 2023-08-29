@@ -16,23 +16,23 @@ int can_start_protocol()
     return in_protocol;
 }
 
-void start_protocol(struct Sensor sensor)
+void start_protocol(struct Sensor *sensor)
 {
     tx_hex(PROTOCOL_START_CODE);
     in_protocol = 1;
-    sensor.in_use = 1;
+    sensor->in_use = 1;
 }
 
-void end_protocol(struct Sensor sensor)
+void end_protocol(struct Sensor *sensor)
 {
     tx_hex(PROTOCOL_END_CODE);
     in_protocol = 0;
-    sensor.in_use = 1;
+    sensor->in_use = 0;
 }
 
-int select_sensor_value(struct Sensor sensor)
+int select_sensor_value(struct Sensor *sensor)
 {
-    switch (sensor.command)
+    switch (sensor->command)
     {
     case 0x00:
         return 0;
@@ -45,63 +45,63 @@ struct Sensor *get_sensors()
     return sensors;
 }
 
-void get_sensor_temperature(struct Sensor sensor)
+void get_sensor_temperature(struct Sensor *sensor)
 {
     int integer;
     int decimal;
     int situation;
     start_protocol(sensor);
-    tx_hex(sensor.address);
+    tx_hex(sensor->address);
     tx_hex(READ_TEMPERATURE_COMMAND);
     integer = rx_int();
     decimal = rx_int();
     situation = rx_int();
     end_protocol(sensor);
-    sensor.temperature = build_float(integer, decimal);
+    sensor->temperature = build_float(integer, decimal);
     if (situation != 0x07)
-        sensor.working = 0;
+        sensor->working = 0;
     else
-        sensor.working = 1;
+        sensor->working = 1;
 }
 
-void get_sensor_humidity(struct Sensor sensor)
+void get_sensor_humidity(struct Sensor *sensor)
 {
     int integer;
     int decimal;
     int situation;
     start_protocol(sensor);
-    tx_hex(sensor.address);
+    tx_hex(sensor->address);
     tx_hex(READ_HUMIDITY_COMMAND);
     integer = rx_int();
     decimal = rx_int();
     end_protocol(sensor);
     situation = rx_int();
-    sensor.humidity = build_float(integer, decimal);
+    sensor->humidity = build_float(integer, decimal);
     if (situation != 0x07)
-        sensor.working = 0;
+        sensor->working = 0;
     else
-        sensor.working = 1;
+        sensor->working = 1;
 }
 
-void get_sensor_situation(struct Sensor sensor)
+void get_sensor_situation(struct Sensor *sensor)
 {
     int situation;
     start_protocol(sensor);
-    tx_hex(sensor.address);
+    tx_hex(sensor->address);
     tx_hex(READ_SITUATION_COMMAND);
     situation = rx_int();
     end_protocol(sensor);
     if (situation != 0x07)
-        sensor.working = 0;
+        sensor->working = 0;
     else
-        sensor.working = 1;
+        sensor->working = 1;
 }
 
-void toggle_continuos_monitoring(struct Sensor sensor)
+void toggle_continuos_monitoring(struct Sensor *sensor)
 {
     start_protocol(sensor);
-    tx_hex(sensor.address);
-    tx_hex(sensor.command);
+    tx_hex(sensor->address);
+    tx_hex(sensor->command);
     end_protocol(sensor);
 }
 
