@@ -36,7 +36,7 @@ gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpe
 echo "Removendo arquivos de sobras..."
 
 # Limpa os arquivos de objetos executáveis
-rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o  #("descomente" para permitir a reciclagem automática)
+rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o continuos_reader.o  #("descomente" para permitir a reciclagem automática)
 
 echo "Programa compilado com sucesso!"
 sleep 1
