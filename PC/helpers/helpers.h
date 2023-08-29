@@ -12,4 +12,8 @@ void clear_input_buffer();
 void clear_console();
 int hex_to_decimal(int hex_value);
 float build_float(int integer, int decimal);
+
+// time_helpers.c
+int sleep_nanos(unsigned long long ns);
+int sleep_micros(unsigned long long us);
 #endif

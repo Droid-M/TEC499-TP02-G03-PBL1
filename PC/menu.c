@@ -64,7 +64,7 @@ int manage_sensor_menu()
         break;
     case 0x02:
         get_sensor_humidity(sensors[sensor_address]);
-        printf("Umidade do sensor #%d: %.2f%", sensors[sensor_address].address, sensors[sensor_address].humidity);
+        printf("Umidade do sensor #%d: %.2f%%", sensors[sensor_address].address, sensors[sensor_address].humidity);
         break;
     case 0x03:
         toggle_continuos_monitoring(sensors[sensor_address]);

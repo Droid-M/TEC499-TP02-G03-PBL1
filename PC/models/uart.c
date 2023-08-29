@@ -68,7 +68,7 @@ void tx_hex(unsigned int hex_value)
 {
     uint8_t data = (uint8_t)hex_value;
     unsigned char start_bit = 0;
-    nanosleep(200000);
+    sleep_micros(200000);
     write(fd, &start_bit, 1);
     write(fd, &data, sizeof(data));
 }
@@ -78,7 +78,7 @@ char rx_char()
     char buffer[1]; // Buffer para armazenar o byte lido
 
     // Aguardar um atraso antes de ler o byte
-    nanosleep(200000); // Recomendado: Atraso de 200 milissegundos
+    sleep_micros(200000); // Recomendado: Atraso de 200 milissegundos
 
     // Receber dados da porta serial
     int numBytes = read(fd, buffer, sizeof(buffer));
