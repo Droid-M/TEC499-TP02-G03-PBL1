@@ -1,9 +1,10 @@
 #!/bin/bash
 
-echo "Removendo antigo programa compilado..."
+echo "Removendo antigos programas compilados..."
 
-# Remove instância executável antiga para evitar trava de sobrescrita
+# Remove antigas instâncias executáveis para evitar trava de sobrescrita
 rm menu
+rm continuos_reader
 
 echo "Compilando funções ajudantes..."
 
@@ -32,10 +33,10 @@ echo "Ligando arquivos de objeto e criado executáveis..."
 gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o menu.o -o menu
 gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o continuos_reader.o -o continuos_reader
 
-# echo "Removendo arquivos sobras..."
+echo "Removendo arquivos sobras..."
 
-# Limpar os arquivos objetos e executável
-# rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o  #("descomente" para permitir a reciclagem automática)
+Limpar os arquivos objetos e executável
+rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o  #("descomente" para permitir a reciclagem automática)
 
 echo "Programa compilado com sucesso!"
 sleep 1
