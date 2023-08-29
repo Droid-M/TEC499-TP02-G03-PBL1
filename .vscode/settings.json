@@ -9,7 +9,9 @@
         "helpers.h": "c",
         "fcntl.h": "c",
         "models.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "string.h": "c",
+        "windows.h": "c"
     },
     "cSpell.words": [
         "kbhit",

@@ -30,4 +30,11 @@ void get_sensor_temperature(struct Sensor *sensor);
 void get_sensor_humidity(struct Sensor *sensor);
 void get_sensor_situation(struct Sensor *sensor);
 void toggle_continuos_monitoring(struct Sensor *sensor);
+
+// semaphore.c
+
+void init_shared_memory();
+void write_in_shared_memory(const char *message);
+char *get_shared_value();
+void close_shared_memory();
 #endif
