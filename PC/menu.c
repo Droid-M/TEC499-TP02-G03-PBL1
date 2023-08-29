@@ -29,7 +29,7 @@ int manage_sensor_menu()
     unsigned int sensor_command = 0;
     char command[100];
     // input("Informe o endereço do sensor (entre 1 e 32):", "%x", &sensor_address);
-    input_x("Informe o endereço do sensor (entre 1 e 32):", &sensor_address, 16);
+    input_x("Informe o endereço do sensor (entre 0x01 e 0x20):", &sensor_address, 16);
     if (sensor_address < 0x01 || sensor_address > 0x20)
     {
         fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
@@ -54,35 +54,35 @@ int manage_sensor_menu()
     switch (sensor_command)
     {
     case 0x00:
-        get_sensor_situation(&sensors[sensor_address]);
-        if (sensors[sensor_address].working)
-            printf("Situação do sensor #%d: FUNCIONANDO NORMALMENTE :)", sensors[sensor_address].address);
+        get_sensor_situation(&sensors[sensor_address - 1]);
+        if (sensors[sensor_address - 1].working)
+            printf("Situação do sensor #%d: FUNCIONANDO NORMALMENTE :)", sensors[sensor_address - 1].address);
         else
-            printf("Situação do sensor #%d: COM PROBLEMAS :(", sensors[sensor_address].address);
+            printf("Situação do sensor #%d: COM PROBLEMAS :(", sensors[sensor_address - 1].address);
         break;
     case 0x01:
-        get_sensor_temperature(&sensors[sensor_address]);
-        printf("Temperatura lida no sensor #%d: %.3f °C", sensors[sensor_address].address, sensors[sensor_address].temperature);
+        get_sensor_temperature(&sensors[sensor_address - 1]);
+        printf("Temperatura lida no sensor #%d: %.3f °C", sensors[sensor_address - 1].address, sensors[sensor_address - 1].temperature);
         break;
     case 0x02:
-        get_sensor_humidity(&sensors[sensor_address]);
-        printf("Umidade lida no sensor #%d: %.2f%%", sensors[sensor_address].address, sensors[sensor_address].humidity);
+        get_sensor_humidity(&sensors[sensor_address - 1]);
+        printf("Umidade lida no sensor #%d: %.2f%%", sensors[sensor_address - 1].address, sensors[sensor_address - 1].humidity);
         break;
     case 0x03:
-        toggle_continuos_monitoring(&sensors[sensor_address]);
-        printf("Monitoramento contínuo de temperatura ativado para o sensor #%d", sensors[sensor_address].address);
+        toggle_continuos_monitoring(&sensors[sensor_address - 1]);
+        printf("Monitoramento contínuo de temperatura ativado para o sensor #%d", sensors[sensor_address - 1].address);
         break;
     case 0x04:
-        toggle_continuos_monitoring(&sensors[sensor_address]);
-        printf("Monitoramento contínuo de umidade ativado para o sensor #%d", sensors[sensor_address].address);
+        toggle_continuos_monitoring(&sensors[sensor_address - 1]);
+        printf("Monitoramento contínuo de umidade ativado para o sensor #%d", sensors[sensor_address - 1].address);
         break;
     case 0x05:
-        toggle_continuos_monitoring(&sensors[sensor_address]);
-        printf("Monitoramento contínuo de temperatura desativado para o sensor #%d", sensors[sensor_address].address);
+        toggle_continuos_monitoring(&sensors[sensor_address - 1]);
+        printf("Monitoramento contínuo de temperatura desativado para o sensor #%d", sensors[sensor_address - 1].address);
         break;
     case 0x06:
-        toggle_continuos_monitoring(&sensors[sensor_address]);
-        printf("Monitoramento contínuo de umidade desativado para o sensor #%d", sensors[sensor_address].address);
+        toggle_continuos_monitoring(&sensors[sensor_address - 1]);
+        printf("Monitoramento contínuo de umidade desativado para o sensor #%d", sensors[sensor_address - 1].address);
         break;
     case 0x07:
         #ifdef _WIN32
@@ -135,8 +135,10 @@ void menu()
 
 int main()
 {
+    init_shared_memory();
     open_connection();
     menu();
     close_connection();
+    close_shared_memory();
     return 0;
 }

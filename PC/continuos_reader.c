@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
         pause_program("pressione Enter para sair...");
         return 1;
     }
+    init_shared_memory();
     int sensor_address = atoi(argv[1]);
     int sensor_command = atoi(argv[2]);
     time_t currentTime;
@@ -25,22 +26,24 @@ int main(int argc, char *argv[])
     {
         while (!key_has_pressed())
         {
+            sleep(1);
             time(&currentTime); // Obtém o tempo atual
             localTime = localtime(&currentTime);
-            get_sensor_temperature(&sensors[sensor_address]);
+            get_sensor_temperature(&sensors[sensor_address - 1]);
             printf("\nInstante %02d:%02d:%02d ----- ", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
-            printf("Temperatura lida no sensor #%d: %.3f °C\n\n", sensors[sensor_address].address, sensors[sensor_address].temperature);
+            printf("Temperatura lida no sensor #%d: %.3f °C\n\n", sensors[sensor_address - 1].address, sensors[sensor_address - 1].temperature);
         }
     }
     else if (sensor_command == 0x08)
     {
         while (!key_has_pressed())
         {
+            sleep(1);
             time(&currentTime); // Obtém o tempo atual
             localTime = localtime(&currentTime);
-            get_sensor_humidity(&sensors[sensor_address]);
+            get_sensor_humidity(&sensors[sensor_address - 1]);
             printf("\nInstante %02d:%02d:%02d ----- ", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
-            printf("Umidade lida no sensor #%d: %.3f%%\n\n", sensors[sensor_address].address, sensors[sensor_address].humidity);
+            printf("Umidade lida no sensor #%d: %.3f%%\n\n", sensors[sensor_address - 1].address, sensors[sensor_address - 1].humidity);
         }
     }
     else
@@ -50,5 +53,6 @@ int main(int argc, char *argv[])
         return 1;
     }
     pause_program("pressione Enter para sair...");
+    close_shared_memory();
     return 0;
 }
