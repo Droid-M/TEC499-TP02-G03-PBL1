@@ -17,7 +17,7 @@ extern short int in_protocol;
 // uart.c
 int open_connection();
 void close_connection();
-char rx_char();
+char *rx_char();
 int rx_int();
 void tx_char(char *data);
 void tx_hex(unsigned int hex_value);

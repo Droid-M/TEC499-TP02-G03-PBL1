@@ -5,6 +5,12 @@
 int sleep_nanos(unsigned long long ns);
 int sleep_micros(unsigned long long us);
 
+// number_helpers.c
+int hex_to_decimal(int hex_value);
+float build_float(int integer, int decimal);
+int random_decimal(int max_value);
+int random_hexa(int hexa_digits_qty);
+
 int key_has_pressed();
 void slowed_printf(char *to_print, float delay_seconds);
 void skip_lines(int qty, int delay_per_line, char *line_content);
@@ -14,7 +20,5 @@ void input_d(char *message, int *buffer, int max_size);
 void input_x(char *message, int *buffer, int max_size);
 void clear_input_buffer();
 void clear_console();
-int hex_to_decimal(int hex_value);
-float build_float(int integer, int decimal);
 
 #endif

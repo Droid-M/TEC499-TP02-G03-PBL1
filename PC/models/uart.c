@@ -3,12 +3,53 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
+
+#define IN_UART_SIMULATION // Remova esta linha para habilitar a conexão UART
+
+#ifdef IN_UART_SIMULATION
+
+#include "../helpers/helpers.h"
+
+int open_connection()
+{
+    return 1;
+}
+void close_connection() {}
+
+char *rx_char()
+{
+    static char hex_char[3]; // Tamanho suficiente para dois dígitos + '\0'
+    int hex_int = random_hexa(2);
+    printf("\n\nGerando valores aleatórios. Isto vai demorar um segundo (literalmente)...\n\n");
+    sleep(1); // Para dar tempo da semente do random ser regenerada
+    if (random_decimal(4) > 1)
+        snprintf(hex_char, sizeof(hex_char), "%02X", 0x07); // Usar %02X para sempre gerar 2 dígitos
+    else
+        snprintf(hex_char, sizeof(hex_char), "%02X", hex_int);
+    return hex_char;
+}
+
+int rx_int()
+{
+    char *byte_rx = rx_char();
+    if (byte_rx[0] == '\0')
+        return -1;
+    return (int)strtol(byte_rx, NULL, 16);
+}
+
+void tx_char(char *data) {}
+
+void tx_hex(unsigned int hex_value) {}
+
+#else
 
 #ifdef _WIN32
 
+// REVIEW - Implementar funções do C
 int open_connection() { return 1; }
 void close_connection() {}
-char rx_char() { return '9'; }
+char *rx_char() { return '9'; }
 int rx_int() { return 7; }
 void tx_char(char *data) {}
 void tx_hex(unsigned int hex_value) {}
@@ -73,9 +114,9 @@ void tx_hex(unsigned int hex_value)
     write(fd, &data, sizeof(data));
 }
 
-char rx_char()
+char *rx_char()
 {
-    char buffer[1]; // Buffer para armazenar o byte lido
+    char buffer[3]; // Buffer para armazenar o byte lido
 
     // Aguardar um atraso antes de ler o byte
     sleep_micros(200000); // Recomendado: Atraso de 200 milissegundos
@@ -85,20 +126,22 @@ char rx_char()
 
     if (numBytes == 1)
     {
-        return buffer[0]; // Retornar o byte lido
+        return buffer; // Retornar o byte lido
     }
     else
     {
-        return '\0'; // Retorna caractere nulo se ocorrer um erro
+        return "\0"; // Retorna caractere nulo se ocorrer um erro
     }
 }
 
 int rx_int()
 {
-    char byte_rx = rx_char();
-    if (byte_rx == '\0')
+    char *byte_rx = rx_char();
+    if (byte_rx[0] == '\0')
         return -1;
-    return (int)byte_rx;
+    return (int)strtol(byte_rx, NULL, 16);
 }
+
+#endif
 
 #endif
