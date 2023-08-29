@@ -1,9 +1,9 @@
 #include "./helpers/helpers.h"
 #include "./models/models.h"
-
 #include <stdio.h>
 #include <unistd.h>
 #include <locale.h>
+#include <stdlib.h>
 
 #define H 0x48 // 72 em decimal
 #define h 0x68 // 104 em decimal
@@ -19,12 +19,15 @@ void show_sensor_commands()
     printf("Código: 0x04 ---- Comando: Ativa o sensoriamento contínuo de umidade\n");
     printf("Código: 0x05 ---- Comando: Desativa o sensoriamento contínuo de temperatura\n");
     printf("Código: 0x06 ---- Comando: Desativa o sensoriamento contínuo de umidade\n");
+    printf("Código: 0x07 ---- Comando: Exibe o sensoriamento contínuo de temperatura\n");
+    printf("Código: 0x08 ---- Comando: Exibe o sensoriamento contínuo de umidade\n");
 }
 
 int manage_sensor_menu()
 {
     unsigned int sensor_address;
     unsigned int sensor_command = 0;
+    char command[100];
     // input("Informe o endereço do sensor (entre 1 e 32):", "%x", &sensor_address);
     input_x("Informe o endereço do sensor (entre 1 e 32):", &sensor_address, 16);
     if (sensor_address < 0x01 || sensor_address > 0x20)
@@ -38,7 +41,7 @@ int manage_sensor_menu()
         if (sensor_command == H || sensor_command == h)
             show_sensor_commands();
         input_x("Informe o comando a ser enviado ao sensor (ou, insira '0x48' sem aspas para visualizar a lista de comandos disponíveis):", &sensor_command, 16);
-        if (sensor_command != H && sensor_command != h && (sensor_command < 0x00 || sensor_command > 0x06))
+        if (sensor_command != H && sensor_command != h && (sensor_command < 0x00 || sensor_command > 0x08))
         {
             printf("Selecionou: %x\n\n", sensor_command);
             fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
@@ -59,11 +62,11 @@ int manage_sensor_menu()
         break;
     case 0x01:
         get_sensor_temperature(&sensors[sensor_address]);
-        printf("Temperatura do sensor #%d: %.3f °C", sensors[sensor_address].address, sensors[sensor_address].temperature);
+        printf("Temperatura lida no sensor #%d: %.3f °C", sensors[sensor_address].address, sensors[sensor_address].temperature);
         break;
     case 0x02:
         get_sensor_humidity(&sensors[sensor_address]);
-        printf("Umidade do sensor #%d: %.2f%%", sensors[sensor_address].address, sensors[sensor_address].humidity);
+        printf("Umidade lida no sensor #%d: %.2f%%", sensors[sensor_address].address, sensors[sensor_address].humidity);
         break;
     case 0x03:
         toggle_continuos_monitoring(&sensors[sensor_address]);
@@ -80,6 +83,22 @@ int manage_sensor_menu()
     case 0x06:
         toggle_continuos_monitoring(&sensors[sensor_address]);
         printf("Monitoramento contínuo de umidade desativado para o sensor #%d", sensors[sensor_address].address);
+        break;
+    case 0x07:
+        #ifdef _WIN32
+        sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
+        #else
+        sprintf(command, "xterm -e ./continuos_reader %d %d", sensor_address, sensor_command);
+        #endif
+        system(command);
+        break;
+    case 0x08:
+        #ifdef _WIN32
+        sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
+        #else
+        sprintf(command, "xterm -e ./continuos_reader %d %d", sensor_address, sensor_command);
+        #endif
+        system(command);
         break;
     default:
         printf("Comando '%d' inválido!", sensor_command);

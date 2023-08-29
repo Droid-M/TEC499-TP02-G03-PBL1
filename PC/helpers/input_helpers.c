@@ -173,3 +173,15 @@ void input(char *message, const char *format, ...)
     int result = vfscanf(stdin, format, args);
     va_end(args);
 }
+
+void pause_program(char *message)
+{
+    printf("\n");
+    printf(message);
+    fflush(stdout);
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+        // Lê e descarta os caracteres até que seja pressionada a tecla Enter
+    }
+}

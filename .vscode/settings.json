@@ -8,7 +8,8 @@
         "input_helpers.h": "c",
         "helpers.h": "c",
         "fcntl.h": "c",
-        "models.h": "c"
+        "models.h": "c",
+        "time.h": "c"
     },
     "cSpell.words": [
         "kbhit",
