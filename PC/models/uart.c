@@ -1,9 +1,21 @@
 #include "models.h"
 #include <stdio.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <unistd.h>
 #include <string.h>
+
+#ifdef _WIN32
+
+int open_connection() { return 1; }
+void close_connection() {}
+char rx_char() { return '9'; }
+int rx_int() { return 9; }
+void tx_char(char *data) {}
+void tx_hex(unsigned int hex_value) {}
+
+#else
+
+#include <termios.h>
 
 int fd;
 
@@ -56,7 +68,7 @@ void tx_hex(unsigned int hex_value)
 {
     uint8_t data = (uint8_t)hex_value;
     unsigned char start_bit = 0;
-    usleep(200000);
+    nanosleep(200000);
     write(fd, &start_bit, 1);
     write(fd, &data, sizeof(data));
 }
@@ -66,7 +78,7 @@ char rx_char()
     char buffer[1]; // Buffer para armazenar o byte lido
 
     // Aguardar um atraso antes de ler o byte
-    usleep(200000); // Recomendado: Atraso de 200 milissegundos
+    nanosleep(200000); // Recomendado: Atraso de 200 milissegundos
 
     // Receber dados da porta serial
     int numBytes = read(fd, buffer, sizeof(buffer));
@@ -88,3 +100,5 @@ int rx_int()
         return -1;
     return (int)byte_rx;
 }
+
+#endif

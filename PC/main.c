@@ -63,7 +63,7 @@ int main()
     write(fd, data, strlen(data));
 
     // Aguardar um atraso antes de ler a resposta
-    usleep(100000); // Atraso de 100 milissegundos
+    nanosleep(100000); // Atraso de 100 milissegundos
 
     // Receber dados da porta serial
     char buffer[32];

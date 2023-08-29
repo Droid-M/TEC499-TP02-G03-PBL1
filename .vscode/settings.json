@@ -11,6 +11,7 @@
         "models.h": "c"
     },
     "cSpell.words": [
-        "kbhit"
+        "kbhit",
+        "uart"
     ]
 }

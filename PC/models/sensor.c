@@ -97,9 +97,12 @@ void get_sensor_situation(struct Sensor sensor)
         sensor.working = 1;
 }
 
-enable_continuos_monitoring()
+void toggle_continuos_monitoring(struct Sensor sensor)
 {
-    
+    start_protocol(sensor);
+    tx_hex(sensor.address);
+    tx_hex(sensor.command);
+    end_protocol(sensor);
 }
 
 void register_command(unsigned int address, unsigned int command)

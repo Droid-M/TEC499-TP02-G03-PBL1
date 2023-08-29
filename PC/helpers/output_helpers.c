@@ -18,7 +18,7 @@ void slowed_printf(char *to_print, float delay_seconds)
         snprintf(printed_pause, sizeof(printed_pause), "%f", pause);
         printf("%c", *to_print++);
         fflush(stdout);
-        usleep((useconds_t)pause);
+        nanosleep((useconds_t)pause);
         if (i >= rand_number)
         {
             i = 0;
