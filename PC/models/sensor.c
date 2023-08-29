@@ -86,8 +86,8 @@ void get_sensor_humidity(struct Sensor *sensor)
     tx_hex(READ_HUMIDITY_COMMAND);
     integer = rx_int();
     decimal = rx_int();
-    end_protocol(sensor);
     situation = rx_int();
+    end_protocol(sensor);
     sensor->humidity = build_float(integer, decimal);
     if (situation != 0x07)
         sensor->working = 0;
