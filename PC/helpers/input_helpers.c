@@ -12,6 +12,7 @@
 #include <termios.h> // Biblioteca para Linux
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 #endif
 
 #ifdef _WIN32 // Versão para detectar entradas do teclado no windows
@@ -154,20 +155,20 @@ char *secure_input(int max_size, char format)
 
 void input_d(char *message, int *buffer, int max_size)
 {
-    printf(message);
+    printf("%s", message);
     *buffer = atoi(secure_input(max_size, 'd'));
 }
 
 void input_x(char *message, int *buffer, int max_size)
 {
     char *checker;
-    printf(message);
+    printf("%s", message);
     *buffer = strtol(secure_input(max_size, 'x'), &checker, 16);
 }
 
 void input(char *message, const char *format, ...)
 {
-    printf(message);
+    printf("%s", message);
     va_list args;
     va_start(args, format);
     int result = vfscanf(stdin, format, args);
@@ -177,7 +178,7 @@ void input(char *message, const char *format, ...)
 void pause_program(char *message)
 {
     printf("\n");
-    printf(message);
+    printf("%s", message);
     fflush(stdout);
     int c;
     while ((c = getchar()) != '\n' && c != EOF)
