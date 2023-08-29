@@ -9,7 +9,7 @@
 int open_connection() { return 1; }
 void close_connection() {}
 char rx_char() { return '9'; }
-int rx_int() { return 9; }
+int rx_int() { return 7; }
 void tx_char(char *data) {}
 void tx_hex(unsigned int hex_value) {}
 

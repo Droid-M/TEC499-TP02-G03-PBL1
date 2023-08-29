@@ -27,16 +27,18 @@ gcc -c PC/menu.c -o menu.o
 echo "Linkando arquivos de objeto e criado executável..."
 
 # Vincular os arquivos objetos e criar o executável
-gcc input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o menu.o -o menu
-
-# echo "Executando..."
-
-# Executar o executável
-# ./menu #("descomente" esta linha para executar o programa automaticamente)
+gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o menu.o -o menu
 
 # echo "Removendo arquivos sobras..."
 
 # Limpar os arquivos objetos e executável
 # rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o  #("descomente" para permitir a reciclagem automática)
 
-echo "Sucesso!!!"
+echo "Programa compilado com sucesso!"
+sleep 1
+
+
+# echo "Executando programa..."
+
+# Executar o executável
+# ./menu #("descomente" esta linha para executar o programa automaticamente)

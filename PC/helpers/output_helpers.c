@@ -13,7 +13,7 @@ void slowed_printf(char *to_print, float delay_seconds)
     int rand_number = ((rand() % 6) + 6);
     while (*to_print != '\0')
     {
-        float pause = (delay_seconds * 10000000.0) / i++;
+        float pause = (delay_seconds * 100000000.0) / i++;
         char printed_pause[20];
         snprintf(printed_pause, sizeof(printed_pause), "%f", pause);
         printf("%c", *to_print++);

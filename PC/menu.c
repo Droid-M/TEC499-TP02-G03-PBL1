@@ -38,7 +38,7 @@ int manage_sensor_menu()
         if (sensor_command == H || sensor_command == h)
             show_sensor_commands();
         input_x("Informe o comando a ser enviado ao sensor (ou, insira '0x48' sem aspas para visualizar a lista de comandos disponíveis):", &sensor_command, 16);
-        if (sensor_command != H && sensor_command != h && (sensor_command < 0x01 || sensor_command > 0x06))
+        if (sensor_command != H && sensor_command != h && (sensor_command < 0x00 || sensor_command > 0x06))
         {
             printf("Selecionou: %x\n\n", sensor_command);
             fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
