@@ -106,7 +106,7 @@ Abaixo está a tabela de **comandos de requisição:**
 
     As respostas são compostas por 7 bytes no total. A composição essencial dos bytes que formam a resposta é dada por: **cabeçalho, status, endereço do sensor, dados\* e rodapé**.
 
-    Assim como no comando de requisição, o **cabeçalho** no comando de resposta serve como um indicador do início do protocolo. Após o envio do comando de requisição e a pausa de 20 milissegundos, o PC lê o primeiro byte do _buffer_, que a princípio é o primeiro byte do comando de resposta da FPGA_._ Se o byte lido for diferente de `11111111` significa que houve algum problema na comunicação. Nesse caso, o usuário deve ser notificado do problema ou o comando de requisição deve ser reenviado.
+    Assim como no comando de requisição, o **cabeçalho** no comando de resposta serve como um indicador do início do protocolo. Após o envio do comando de requisição e a pausa de 20 milissegundos, o PC lê o primeiro byte do _buffer_, que a princípio é o primeiro byte do comando de resposta da FPGA. Se o byte lido for diferente de `11111111` significa que houve algum problema na comunicação. Nesse caso, o usuário deve ser notificado do problema ou o comando de requisição deve ser reenviado.
 
     O **status** indica se a FPGA conseguiu interpretar adequadamente o comando de requisição enviado pelo PC, ou seja, indica se: 
 
