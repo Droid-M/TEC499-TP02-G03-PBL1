@@ -7,6 +7,8 @@
 
 #define H 0x48 // 72 em decimal
 #define h 0x68 // 104 em decimal
+#define UART_HAS_FREE "UART_HAS_FREE"
+#define UART_HAS_BUSY "UART_HAS_BUSY"
 
 struct Sensor sensors[32];
 
@@ -141,6 +143,7 @@ void menu()
 int main()
 {
     init_shared_memory();
+    write_in_shared_memory(UART_HAS_FREE);
     open_connection();
     menu();
     close_connection();
