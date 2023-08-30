@@ -62,7 +62,7 @@ void clear_console()
 
 void execute(const char *program_name, char *arguments[])
 {
-    char *command_line = program_name;
+    char *command_line = _strdup(program_name);;
     for (int i = 0; arguments[i] != NULL; i++)
     {
         command_line = realloc(command_line, strlen(command_line) + strlen(arguments[i]) + 2);
