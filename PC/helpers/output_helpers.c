@@ -40,6 +40,10 @@ void skip_lines(int qty, int delay_per_line, char *line_content)
 }
 
 #ifdef _WIN32
+
+#include <stdio.h>
+#include <windows.h>
+
 void c_log(const char *to_output, ...)
 {
     va_list args;
@@ -56,7 +60,53 @@ void clear_console()
     system("cls");
 }
 
+void execute(const char *program_name, char *arguments[])
+{
+    char *command_line = program_name;
+    for (int i = 0; arguments[i] != NULL; i++)
+    {
+        command_line = realloc(command_line, strlen(command_line) + strlen(arguments[i]) + 2);
+        strcat(command_line, " ");
+        strcat(command_line, arguments[i]);
+    }
+
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+
+    PROCESS_INFORMATION pi;
+
+    if (CreateProcess(
+            program_name, // Nome do programa a ser executado (não é necessário)
+            command_line, // Argumentos formatados em uma única string
+            NULL,         // Processo pai não herda handles de processo
+            NULL,         // Processo pai não herda handles de thread
+            FALSE,        // Não herdar os handles do processo pai
+            0,            // Flags de criação (normalmente 0)
+            NULL,         // Variáveis de ambiente (herda as do processo pai)
+            NULL,         // Diretório de trabalho (mesmo do processo pai)
+            &si,          // Informações de inicialização do processo filho
+            &pi           // Informações de identificação do processo e thread
+            ))
+    {
+        printf("Programa %s foi iniciado em segundo plano (PID: %lu).\n", program_name, pi.dwProcessId);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
+    else
+    {
+        fprintf(stderr, "Erro ao executar o programa. Código de erro: %lu\n", GetLastError());
+    }
+
+    free(command_line);
+}
+
 #else
+
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
 void c_log(const char *to_output, ...)
 {
     va_list args;
@@ -69,4 +119,24 @@ void clear_console()
 {
     system("clear");
 }
+
+void execute(const char *program_name, char *arguments[])
+{
+    pid_t child_pid = fork();
+
+    if (child_pid == -1)
+    {
+        exit(1);
+    }
+    else if (child_pid == 0)
+    {
+        // setsid();
+        execvp(program_name, arguments);
+    }
+    else
+    {
+        return;
+    }
+}
+
 #endif

@@ -28,6 +28,7 @@ int manage_sensor_menu()
     unsigned int sensor_address;
     unsigned int sensor_command = 0;
     char command[100];
+    char *arguments[4] = {"xterm", "-e", "", NULL};
     // input("Informe o endereço do sensor (entre 1 e 32):", "%x", &sensor_address);
     input_x("Informe o endereço do sensor (entre 0x01 e 0x20):", &sensor_address, 16);
     if (sensor_address < 0x01 || sensor_address > 0x20)
@@ -87,18 +88,22 @@ int manage_sensor_menu()
     case 0x07:
         #ifdef _WIN32
         sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
-        #else
-        sprintf(command, "xterm -e ./continuos_reader %d %d", sensor_address, sensor_command);
-        #endif
         system(command);
+        #else
+        sprintf(command, "./continuos_reader %d %d", sensor_address, sensor_command);
+        arguments[2] = command;
+        execute("xterm", arguments);
+        #endif
         break;
     case 0x08:
         #ifdef _WIN32
         sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
-        #else
-        sprintf(command, "xterm -e ./continuos_reader %d %d", sensor_address, sensor_command);
-        #endif
         system(command);
+        #else
+        sprintf(command, "./continuos_reader %d %d", sensor_address, sensor_command);
+        arguments[2] = command;
+        execute("xterm", arguments);
+        #endif
         break;
     default:
         printf("Comando '%d' inválido!", sensor_command);

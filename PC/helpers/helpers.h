@@ -24,5 +24,6 @@ void skip_lines(int qty, int delay_per_line, char *line_content);
 // void c_log(const char *to_output, ...);
 void clear_input_buffer();
 void clear_console();
+void execute(const char *program_name, char *arguments[]);
 
 #endif
