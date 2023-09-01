@@ -6,16 +6,22 @@
 #include <ctype.h>
 
 #ifdef _WIN32
+
 #include <windows.h> // Biblioteca para Windows
 #include <conio.h>
+
 #else
+
 #include <termios.h> // Biblioteca para Linux
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <curses.h>
+
 #endif
 
 #ifdef _WIN32 // Versão para detectar entradas do teclado no windows
+
 int key_has_pressed()
 {
     // HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
@@ -24,6 +30,12 @@ int key_has_pressed()
     // return dwEvents > 0;
     return kbhit(); // ou _kbhit();
 }
+
+char input_char()
+{
+    return getch();
+}
+
 #else // Versão para detectar entradas de teclado em sistemas Unix-like
 int key_has_pressed()
 {
@@ -51,7 +63,15 @@ int key_has_pressed()
 
     return 0;
 }
+
+char input_char()
+{
+    return getch();
+}
+
 #endif
+
+
 void clear_input_buffer()
 {
     int c;

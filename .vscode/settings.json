@@ -12,7 +12,8 @@
         "time.h": "c",
         "string.h": "c",
         "windows.h": "c",
-        "wait.h": "c"
+        "wait.h": "c",
+        "cstdio": "c"
     },
     "cSpell.words": [
         "kbhit",

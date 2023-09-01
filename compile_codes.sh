@@ -3,8 +3,8 @@
 echo "Removendo antigos programas compilados..."
 
 # Remove antigas instâncias executáveis para evitar trava de sobrescrita
-rm menu
-rm continuos_reader
+rm menu continuos_reader
+rm simple_communication
 
 echo "Compilando funções ajudantes..."
 
@@ -27,17 +27,20 @@ echo "Compilando programa principal e auxiliares..."
 gcc -c PC/menu.c -o menu.o
 # Compilar os programas auxiliares
 gcc -c PC/continuos_reader.c -o continuos_reader.o
+gcc -c PC/simple_communication.c -o simple_communication.o
 
 echo "Ligando arquivos de objeto e criado executáveis..."
 
 # Vincular os arquivos objetos e criar o executável
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o menu.o semaphore.o -o menu -lm
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o continuos_reader.o semaphore.o -o continuos_reader -lm
+gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o menu.o -o menu -lm
+gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm
+gcc time_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm
 
 echo "Removendo arquivos de sobras..."
 
 # Limpa os arquivos de objetos executáveis
 rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o  #("descomente" para permitir a reciclagem automática)
+rm simple_communication.o
 
 echo "Programa compilado com sucesso!"
 sleep 1

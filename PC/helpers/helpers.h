@@ -17,6 +17,7 @@ void pause_program(char *message);
 void input(char *message, const char *format, ...);
 void input_d(char *message, int *buffer, int max_size);
 void input_x(char *message, int *buffer, int max_size);
+char input_char();
 
 // output_helpers.c
 void slowed_printf(char *to_print, float delay_seconds);

@@ -4,8 +4,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define IN_UART_SIMULATION // Remova esta linha para habilitar a conexão UART
+// #define IN_UART_SIMULATION // Remova esta linha para habilitar a conexão UART
 
 #ifdef IN_UART_SIMULATION
 
@@ -49,8 +50,26 @@ void tx_hex(unsigned int hex_value) {}
 // REVIEW - Implementar funções do C
 int open_connection() { return 1; }
 void close_connection() {}
-char *rx_char() { return '9'; }
-int rx_int() { return 7; }
+char *rx_char()
+{
+    char *data = (char *)malloc(2 * sizeof(char)); // Alocar memória para um caractere + terminador nulo
+    if (data != NULL)
+    {
+        srand(time(NULL));
+        data[0] = (char)(rand() % 256); // Armazenar um número aleatório entre 0 e 255
+        data[1] = '\0';                 // Adicionar o terminador nulo
+    } else {
+        free(data);
+    }
+    return data;
+}
+int rx_int()
+{
+    char *byte_rx = rx_char();
+    if (byte_rx[0] == '\0')
+        return -1;
+    return (int)strtol(byte_rx, NULL, 16);
+}
 void tx_char(char *data) {}
 void tx_hex(unsigned int hex_value) {}
 
@@ -116,21 +135,28 @@ void tx_hex(unsigned int hex_value)
 
 char *rx_char()
 {
-    char buffer[3]; // Buffer para armazenar o byte lido
-
-    // Aguardar um atraso antes de ler o byte
-    sleep_micros(200000); // Recomendado: Atraso de 200 milissegundos
-
-    // Receber dados da porta serial
-    int numBytes = read(fd, buffer, sizeof(buffer));
-
-    if (numBytes == 1)
+    char *buffer = (char *)malloc(2); // Alocar memória para o byte lido e o terminador nulo
+    if (buffer != NULL)
     {
-        return buffer; // Retornar o byte lido
+        // Aguardar um atraso antes de ler o byte
+        usleep(200000); // Recomendado: Atraso de 200 milissegundos
+
+        // Receber dados da porta serial
+        int numBytes = read(fd, buffer, 1); // Lê apenas 1 byte
+        if (numBytes == 1)
+        {
+            buffer[1] = '\0'; // Adicionar o terminador nulo
+            return buffer;
+        }
+        else
+        {
+            free(buffer);
+            return NULL;  // Retorna NULL se ocorrer um erro
+        }
     }
     else
     {
-        return "\0"; // Retorna caractere nulo se ocorrer um erro
+        return NULL; // Retorna NULL em caso de falha na alocação de memória
     }
 }
 
