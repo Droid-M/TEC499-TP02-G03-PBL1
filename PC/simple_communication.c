@@ -8,7 +8,7 @@
 
 char dialog(char *dialogMessage)
 {
-    printf(dialogMessage);
+    printf("%s", dialogMessage);
     char exit = input_char();
     while (exit != 's' && exit != 'n')
     {

@@ -5,12 +5,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "../helpers/helpers.h"
 
 // #define IN_UART_SIMULATION // Remova esta linha para habilitar a conexão UART
 
 #ifdef IN_UART_SIMULATION
-
-#include "../helpers/helpers.h"
 
 int open_connection()
 {
