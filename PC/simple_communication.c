@@ -6,7 +6,7 @@
 
 #define SIMULATE_UART
 
-char *dialog(char *dialogMessage)
+char dialog(char *dialogMessage)
 {
     printf(dialogMessage);
     char exit = input_char();
