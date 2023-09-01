@@ -58,7 +58,9 @@ char *rx_char()
         srand(time(NULL));
         data[0] = (char)(rand() % 256); // Armazenar um número aleatório entre 0 e 255
         data[1] = '\0';                 // Adicionar o terminador nulo
-    } else {
+    }
+    else
+    {
         free(data);
     }
     return data;
@@ -76,8 +78,26 @@ void tx_hex(unsigned int hex_value) {}
 #else
 
 #include <termios.h>
+#include <stdint.h>
 
 int fd;
+
+void configure_serial_port(int fd, speed_t baud_rate)
+{
+    struct termios options;
+
+    // Obter as configurações atuais da porta serial
+    tcgetattr(fd, &options);
+
+    // Configurar velocidade de leitura (entrada) e escrita (saída)
+    cfsetispeed(&options, baud_rate);
+    cfsetospeed(&options, baud_rate);
+
+    // Configurar opções da porta serial...
+
+    // Definir as configurações da porta serial
+    tcsetattr(fd, TCSANOW, &options);
+}
 
 int open_connection()
 {
@@ -98,23 +118,6 @@ void close_connection()
 {
     // Fechar a porta serial
     close(fd);
-}
-
-void configure_serial_port(int fd, speed_t baud_rate)
-{
-    struct termios options;
-
-    // Obter as configurações atuais da porta serial
-    tcgetattr(fd, &options);
-
-    // Configurar velocidade de leitura (entrada) e escrita (saída)
-    cfsetispeed(&options, baud_rate);
-    cfsetospeed(&options, baud_rate);
-
-    // Configurar opções da porta serial...
-
-    // Definir as configurações da porta serial
-    tcsetattr(fd, TCSANOW, &options);
 }
 
 void tx_char(char *data)
@@ -151,7 +154,7 @@ char *rx_char()
         else
         {
             free(buffer);
-            return NULL;  // Retorna NULL se ocorrer um erro
+            return NULL; // Retorna NULL se ocorrer um erro
         }
     }
     else
