@@ -50,15 +50,20 @@ int main()
     // Configurar a porta serial com baud rate de 9600
     configureSerialPort(fd, B9600);
 
-    char data = (char) 0x41;
+    unsigned int input = (char) 0x41;
+    printf("\nInsira um valor hexadecimal para enviar ao sensor: ");
+    scanf("%x", &input);
+    char data[3];
+    sprintf(data, "%x", input);
     
-    printf("\nSe preparando para enviar '%c'...\n", data);
+    
+    printf("\nSe preparando para enviar '%c' ('%s' em hexadecimal e '%d' em decimal)...\n", (char) input, data, (int) input);
     fflush(stdout);
 
     // Enviar os dados para a porta serial
-    write(fd, &data, 1);
+    write(fd, data, 1);
     
-    printf("\nValor '%c' enviado! Aguardando resposta...\n", data);
+    printf("\nValor '%c' enviado! Aguardando resposta...\n", (char) input);
     fflush(stdout);
 
     // Aguardar um atraso antes de ler a resposta
@@ -82,6 +87,6 @@ int main()
     
     printf("\nConexão fechada. Pression Enter para sair...");
 
-    scanf("%c", &data);
+    scanf("%s", data);
     return 0;
 }
