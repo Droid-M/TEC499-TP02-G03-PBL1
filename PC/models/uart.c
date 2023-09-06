@@ -55,7 +55,7 @@ char *rx_char()
     if (data != NULL)
     {
         srand(time(NULL));
-        data[0] = (char)(rand() % 256); // Armazenar um número aleatório entre 0 e 255
+        data[0] = (char)(rand() % 128); // Armazenar um número aleatório entre 0 e 128
         data[1] = '\0';                 // Adicionar o terminador nulo
     }
     else
@@ -64,12 +64,14 @@ char *rx_char()
     }
     return data;
 }
+
 int rx_int()
 {
     char *byte_rx = rx_char();
     if (byte_rx[0] == '\0')
         return -1;
-    return (int)strtol(byte_rx, NULL, 16);
+    // return (int)strtol(byte_rx, NULL, 16);
+    return (int)byte_rx[0];
 }
 void tx_char(char *data) {}
 void tx_hex(unsigned int hex_value) {}
