@@ -9,6 +9,8 @@ struct Sensor
     float temperature;
     float humidity;
     short int in_use;
+    int error_in_request;
+    int error_in_response;
 };
 
 extern struct Sensor sensors[32];
@@ -24,12 +26,11 @@ void tx_hex(unsigned int hex_value);
 
 // sensor.c
 int can_start_protocol();
-int select_sensor_value(struct Sensor *sensor);
 void register_command(unsigned int address, unsigned int command);
 void get_sensor_temperature(struct Sensor *sensor);
 void get_sensor_humidity(struct Sensor *sensor);
 void get_sensor_situation(struct Sensor *sensor);
-void toggle_continuos_monitoring(struct Sensor *sensor);
+short int toggle_continuos_monitoring(struct Sensor *sensor);
 
 // semaphore.c
 
