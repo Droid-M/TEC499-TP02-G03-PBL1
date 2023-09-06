@@ -32,9 +32,9 @@ gcc -c PC/simple_communication.c -o simple_communication.o
 echo "Ligando arquivos de objeto e criado executáveis..."
 
 # Vincular os arquivos objetos e criar o executável
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o menu.o -o menu -lm
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm
-gcc time_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm
+gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o menu.o -o menu -lm -lncurses
+gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm -lncurses
+gcc time_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm -lncurses
 
 echo "Removendo arquivos de sobras..."
 
