@@ -32,7 +32,11 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then #Se o sistema operac
     gcc -c PC/helpers/windows/output_helpers.c -o output_helpers.o
     # Compilar funções de entidades/modelos
     gcc -c PC/models/windows/semaphore.c -o semaphore.o
-    gcc -c PC/models/windows/uart.c -o uart.o
+    if [ "$IN_UART_SIMULATION" == "1" ]; then
+        gcc -c PC/models/windows/fake_uart.c -o uart.o
+    else
+        gcc -c PC/models/windows/uart.c -o uart.o
+    fi
     # Vincular os arquivos objetos e criar o executável
     gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o PC/Executables/menu
     gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o PC/Executables/continuos_reader
@@ -43,7 +47,7 @@ else #Se o sistema operacional não for Windows:
     gcc -c PC/helpers/linux/output_helpers.c -o output_helpers.o
     # Compilar funções de entidades/modelos
     gcc -c PC/models/linux/semaphore.c -o semaphore.o
-    if [ "$IN_UART_SIMULATION" == "0" ]; then
+    if [ "$IN_UART_SIMULATION" == "1" ]; then
         gcc -c PC/models/linux/fake_uart.c -o uart.o
     else
         gcc -c PC/models/linux/uart.c -o uart.o
