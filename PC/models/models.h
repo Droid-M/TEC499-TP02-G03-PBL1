@@ -16,7 +16,7 @@ struct Sensor
 extern struct Sensor sensors[32];
 
 extern short int in_protocol;
-// uart.c
+// uart
 int open_connection();
 void close_connection();
 char *rx_char();

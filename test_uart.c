@@ -72,7 +72,6 @@ int main()
     // Receber dados da porta serial
     char buffer[32];
     int numBytes = read(fd, buffer, sizeof(buffer));
-    // int numBytes = 0x01; //<-- apenas para testar a executação
     if (numBytes > 0) {
         buffer[numBytes] = '\0';
         printf("\nDados recebidos: %s\n", buffer);
@@ -85,7 +84,7 @@ int main()
     // Fechar a porta serial
     close(fd);
     
-    printf("\nConexão fechada. Pression Enter para sair...");
+    printf("\nConexão fechada. Pressione Enter para sair...");
 
     scanf("%s", data);
     return 0;

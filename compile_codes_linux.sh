@@ -13,11 +13,14 @@ gcc -c PC/helpers/time_helpers.c -o time_helpers.o
 gcc -c PC/helpers/input_helpers.c -o input_helpers.o
 gcc -c PC/helpers/output_helpers.c -o output_helpers.o
 gcc -c PC/helpers/number_helpers.c -o number_helpers.o
+gcc -c PC/helpers/file_helpers.c -o file_helpers.o
 
 echo "Compilando funções de entidades/modelos e controle..."
 
 # Compilar funções de entidades/modelos
-gcc -c PC/models/uart.c -o uart.o
+gcc -c PC/models/uart/fake_uart.c -o fake_uart.o
+gcc -c PC/models/uart/fake_uart.c -o linux_uart.o
+gcc -c PC/models/uart/fake_uart.c -o windows_uart.o
 gcc -c PC/models/sensor.c -o sensor.o
 gcc -c PC/models/semaphore.c -o semaphore.o
 
@@ -32,14 +35,14 @@ gcc -c PC/simple_communication.c -o simple_communication.o
 echo "Ligando arquivos de objeto e criado executáveis..."
 
 # Vincular os arquivos objetos e criar o executável
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o menu.o -o menu -lm -lncurses
-gcc time_helpers.o input_helpers.o output_helpers.o sensor.o uart.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm -lncurses
-gcc time_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm -lncurses
+gcc file_helpers.o time_helpers.o input_helpers.o output_helpers.o fake_uart.o linux_uart.o windows_uart.o sensor.o number_helpers.o semaphore.o menu.o -o menu -lm -lncurses
+gcc file_helpers.o time_helpers.o input_helpers.o output_helpers.o fake_uart.o linux_uart.o windows_uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm -lncurses
+gcc file_helpers.o time_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm -lncurses
 
 echo "Removendo arquivos de sobras..."
 
 # Limpa os arquivos de objetos executáveis
-rm input_helpers.o menu.o output_helpers.o sensor.o uart.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o  #("descomente" para permitir a reciclagem automática)
+rm input_helpers.o menu.o output_helpers.o fake_uart.o linux_uart.o windows_uart.o sensor.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o  #("descomente" para permitir a reciclagem automática)
 rm simple_communication.o
 
 echo "Programa compilado com sucesso!"

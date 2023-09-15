@@ -27,4 +27,7 @@ void clear_input_buffer();
 void clear_console();
 void execute(const char *program_name, char *arguments[]);
 
+// file_helpers.c
+const char *env(const char *key);
+
 #endif
