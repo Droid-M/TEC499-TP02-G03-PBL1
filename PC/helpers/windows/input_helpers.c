@@ -125,6 +125,7 @@ char *secure_input(int max_size, char format)
 void input_d(char *message, int *buffer, int max_size)
 {
     printf("%s", message);
+    fflush(stdout);
     *buffer = atoi(secure_input(max_size, 'd'));
 }
 
@@ -132,6 +133,7 @@ void input_x(char *message, int *buffer, int max_size)
 {
     char *checker;
     printf("%s", message);
+    fflush(stdout);
     *buffer = strtol(secure_input(max_size, 'x'), &checker, 16);
 }
 

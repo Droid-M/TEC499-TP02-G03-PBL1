@@ -92,7 +92,7 @@ int manage_sensor_menu()
         break;
     case 0x07:
         #ifdef _WIN32
-        sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
+        sprintf(command, "start %s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);
         system(command);
         #else
         sprintf(command, "./%s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);
@@ -102,7 +102,7 @@ int manage_sensor_menu()
         break;
     case 0x08:
         #ifdef _WIN32
-        sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
+        sprintf(command, "start %s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);
         system(command);
         #else
         sprintf(command, "./%s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);

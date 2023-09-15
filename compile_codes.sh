@@ -61,12 +61,9 @@ fi
 echo "Removendo arquivos de sobras..."
 
 # Limpa os arquivos de objetos executáveis
-rm input_helpers.o menu.o output_helpers.o uart.o sensor.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o file_helpers.o  #("descomente" para permitir a reciclagem automática)
-rm simple_communication.o
+rm input_helpers.o menu.o output_helpers.o uart.o sensor.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o file_helpers.o simple_communication.o #("descomente" para permitir a reciclagem automática)
 
 echo "Programa compilado com sucesso!"
-sleep 1
-
 
 # echo "Executando programa..."
 
