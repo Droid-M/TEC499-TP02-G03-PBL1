@@ -4,8 +4,7 @@ source config.env
 
 # Remove antigas instâncias executáveis para evitar trava de sobrescrita
 echo "Removendo antigos programas compilados..."
-rm menu continuos_reader
-rm simple_communication
+rm PC/Executables/menu PC/Executables/continuos_reader PC/Executables/simple_communication
 
 # Compilar funções ajudantes
 echo "Compilando funções ajudantes..."
@@ -35,10 +34,9 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then #Se o sistema operac
     gcc -c PC/models/windows/semaphore.c -o semaphore.o
     gcc -c PC/models/windows/uart.c -o uart.o
     # Vincular os arquivos objetos e criar o executável
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o menu
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o menu
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o PC/Executables/menu
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o PC/Executables/continuos_reader
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o PC/Executables/simple_communication
 else #Se o sistema operacional não for Windows:
     # Compilar funções ajudantes
     gcc -c PC/helpers/linux/input_helpers.c -o input_helpers.o
@@ -51,16 +49,15 @@ else #Se o sistema operacional não for Windows:
         gcc -c PC/models/linux/uart.c -o uart.o
     fi
     # Vincular os arquivos objetos e criar o executável
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o menu -lm -lncurses
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o menu -lm -lncurses
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o continuos_reader -lm -lncurses
-    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o simple_communication -lm -lncurses
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o menu.o -o PC/Executables/menu -lm -lncurses
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o uart.o sensor.o number_helpers.o semaphore.o continuos_reader.o -o PC/Executables/continuos_reader -lm -lncurses
+    gcc time_helpers.o file_helpers.o input_helpers.o output_helpers.o number_helpers.o simple_communication.o -o PC/Executables/simple_communication -lm -lncurses
 fi
 
 echo "Removendo arquivos de sobras..."
 
 # Limpa os arquivos de objetos executáveis
-rm input_helpers.o menu.o output_helpers.o uart.o sensor.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o  #("descomente" para permitir a reciclagem automática)
+rm input_helpers.o menu.o output_helpers.o uart.o sensor.o number_helpers.o time_helpers.o continuos_reader.o semaphore.o file_helpers.o  #("descomente" para permitir a reciclagem automática)
 rm simple_communication.o
 
 echo "Programa compilado com sucesso!"

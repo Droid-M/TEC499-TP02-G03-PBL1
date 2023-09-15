@@ -30,9 +30,12 @@ int manage_sensor_menu()
     unsigned int sensor_address;
     unsigned int sensor_command = 0;
     char command[100];
-    char *arguments[4] = {"xterm", "-e", "", NULL};
-    // input("Informe o endereço do sensor (entre 1 e 32):", "%x", &sensor_address);
-    input_x("Informe o endereço do sensor (entre 0x01 e 0x20):", &sensor_address, 16);
+    // const char *linux_terminal = "xterm";
+    const char *continuos_reader_exec_path = env("CONTINUOS_READER_EXECUTABLE_PATH");
+    const char *linux_terminal = env("LINUX_TERMINAL");
+    char *arguments[4] = {(char *) linux_terminal, "-e", "", NULL};
+    // input("Informe o endereço do sensor (entre 1 e 32): ", "%x", &sensor_address);
+    input_x("Informe o endereço do sensor (entre 0x01 e 0x20): ", &sensor_address, 16);
     if (sensor_address < 0x01 || sensor_address > 0x20)
     {
         fprintf(stderr, "Opção inválida! Retornando ao menu anterior...");
@@ -43,7 +46,7 @@ int manage_sensor_menu()
     {
         if (sensor_command == H || sensor_command == h)
             show_sensor_commands();
-        input_x("Informe o comando a ser enviado ao sensor (ou, insira '0x48' sem aspas para visualizar a lista de comandos disponíveis):", &sensor_command, 16);
+        input_x("Informe o comando a ser enviado ao sensor (ou, insira '0x48' sem aspas para visualizar a lista de comandos disponíveis): ", &sensor_command, 16);
         if (sensor_command != H && sensor_command != h && (sensor_command < 0x00 || sensor_command > 0x08))
         {
             printf("Selecionou: %x\n\n", sensor_command);
@@ -92,9 +95,9 @@ int manage_sensor_menu()
         sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
         system(command);
         #else
-        sprintf(command, "./continuos_reader %d %d", sensor_address, sensor_command);
+        sprintf(command, "./%s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);
         arguments[2] = command;
-        execute("xterm", arguments);
+        execute(linux_terminal, arguments);
         #endif
         break;
     case 0x08:
@@ -102,9 +105,9 @@ int manage_sensor_menu()
         sprintf(command, "start continuos_reader %d %d", sensor_address, sensor_command);
         system(command);
         #else
-        sprintf(command, "./continuos_reader %d %d", sensor_address, sensor_command);
+        sprintf(command, "./%s %d %d", continuos_reader_exec_path, sensor_address, sensor_command);
         arguments[2] = command;
-        execute("xterm", arguments);
+        execute(linux_terminal, arguments);
         #endif
         break;
     default:
@@ -122,7 +125,7 @@ void menu()
     int choice = 0;
     do
     {
-        printf("Insira o valor correspondente à opção que deseja selecionar:");
+        printf("Insira o valor correspondente à opção que deseja selecionar: ");
         skip_lines(4, 0, "");
         slowed_printf("1 - Enviar comando para sensor\n\n", 0.1);
         slowed_printf("2 - Sair do programa\n\n", 0.1);
