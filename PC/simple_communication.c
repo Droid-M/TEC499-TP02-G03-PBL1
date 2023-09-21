@@ -121,6 +121,8 @@ void disconnect_uart()
 
 int main()
 {
+    int tx_bytes;
+    char char_tx;
     char data[2];
     char buffer[1];
     char choice;
@@ -128,6 +130,7 @@ int main()
     int bytes_qty;
     int count_bytes_seq_tx = 0; // Registra a quantidade de caracteres enviados em sequencia
     int count_bytes_seq_rx = 0; // Registra a quantidade de caracteres recebidos em sequencia
+    char message[100];
 
     printf("\nConfigurando UART...");
     configure_uart();
@@ -137,11 +140,14 @@ int main()
         choice = dialog("\nInsira 't' para enviar algum byte ou 'r' para receber algum byte: ", 't', 'r');
         if (choice == 't') {
             count_bytes_seq_rx = 0;
-            printf("\nInsira o %dº caractere a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
-            data[0] = input_char();
-            printf("\nEnviando '%s' para a FPGA...", data);
-            sent_data(data);
-            printf("\nCaractere '%s' enviado com sucesso!", data);
+            // printf("\nInsira o %dº caractere a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
+            // data[0] = input_char();
+            sprintf(message, "\nInsira o %dº caractere (em HEXADECIMAL) a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
+            input_x(message, &tx_bytes, 8);
+            printf("\nEnviando '0x%X' para a FPGA...", tx_bytes);
+            char_tx = (char) tx_bytes;
+            sent_data(&char_tx);
+            printf("\nCaractere '%c' enviado com sucesso!", char_tx);
         } else if (choice == 'r') {
             printf("\nAguardando resposta da FPGA...");
             bytes_qty = receive_data(buffer);
