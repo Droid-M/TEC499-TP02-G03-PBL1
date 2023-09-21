@@ -4,7 +4,7 @@
 #include <string.h>
 #include "./helpers/helpers.h"
 
-#define SIMULATE_UART
+// #define SIMULATE_UART
 
 char dialog(char *dialogMessage, const char option1, const char option2)
 {
@@ -98,18 +98,19 @@ int receive_data(char *buffer)
     return bytes_qty;
 }
 
-void configure_uart()
+int configure_uart()
 {
     fd = open("/dev/ttyS0", O_RDWR); // Substitua pelo dispositivo correto (ex: /dev/ttyUSB0)
 
     if (fd == -1)
     {
         perror("\nErro ao abrir a porta serial");
-        return 1;
+        return 0;
     }
 
     // Configurar a porta serial com baud rate de 9600
-    configureSerialPort(fd, B9600);
+    configureSerialPort(B9600);
+    return 1;
 }
 
 void disconnect_uart()
@@ -133,8 +134,12 @@ int main()
     char message[100];
 
     printf("\nConfigurando UART...");
-    configure_uart();
-    printf("\nUART configurada!");
+    if (configure_uart())
+        printf("\nUART configurada!");
+    else {
+        printf("\nFalha ao configurar UART!");
+        return 1;
+    }
 
     do {
         choice = dialog("\nInsira 't' para enviar algum byte ou 'r' para receber algum byte: ", 't', 'r');
