@@ -8,7 +8,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
-#include <curses.h>
+
+char getch()
+{
+    char c;
+    system("stty raw -echo");
+    c = getchar();
+    system("stty -raw echo");
+    return c;
+}
 
 int key_has_pressed()
 {

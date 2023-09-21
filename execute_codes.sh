@@ -15,17 +15,17 @@ while true; do
   case $option in
     1)
       clear
-      ./PC/executables/menu
+      ./PC/Executables/menu
       break  # Sai do loop se a opção for válida
       ;;
     2)
       clear
-      ./PC/executables/continuos_reader
+      ./PC/Executables/continuos_reader
       break  # Sai do loop se a opção for válida
       ;;
     3)
       clear    
-      ./PC/executables/simple_communication
+      ./PC/Executables/simple_communication
       break  # Sai do loop se a opção for válida
       ;;
     4)
