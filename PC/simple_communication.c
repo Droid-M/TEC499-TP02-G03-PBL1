@@ -6,16 +6,16 @@
 
 #define SIMULATE_UART
 
-char dialog(char *dialogMessage)
+char dialog(char *dialogMessage, const char option1, const char option2)
 {
     printf("%s", dialogMessage);
-    char exit = input_char();
-    while (exit != 's' && exit != 'n')
+    char choice = input_char();
+    while (choice != option1 && choice != option2)
     {
-        printf("\nOpção inválida! Insira 's' para sim ou 'n' para não: ");
-        exit = input_char();
+        printf("\nOpção inválida! %s", dialogMessage);
+        choice = input_char();
     }
-    return exit;
+    return choice;
 }
 
 #ifdef SIMULATE_UART
@@ -122,42 +122,41 @@ void disconnect_uart()
 int main()
 {
     char data[2];
-    char buffer[32];
-    char can_read_or_write;
+    char buffer[1];
+    char choice;
     char exit;
     int bytes_qty;
+    int count_bytes_seq_tx = 0; // Registra a quantidade de caracteres enviados em sequencia
+    int count_bytes_seq_rx = 0; // Registra a quantidade de caracteres recebidos em sequencia
 
     printf("\nConfigurando UART...");
     configure_uart();
     printf("\nUART configurada!");
 
-    do
-    {
-        can_read_or_write = dialog("\nDeseja enviar algum caractere para a FPGA, 's' ou 'n'? ");
-        if (can_read_or_write == 's')
-        {
-            printf("\nInsira o caractere a ser enviado para a FPGA: ");
+    do {
+        choice = dialog("\nInsira 't' para enviar algum byte ou 'r' para receber algum byte: ", 't', 'r');
+        if (choice == 't') {
+            count_bytes_seq_rx = 0;
+            printf("\nInsira o %dº caractere a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
             data[0] = input_char();
             printf("\nEnviando '%s' para a FPGA...", data);
             sent_data(data);
             printf("\nCaractere '%s' enviado com sucesso!", data);
-        }
-        can_read_or_write = dialog("\n\nDeseja ler algum dado que a FPGA possa enviar, 's' ou 'n'? ");
-        if (can_read_or_write == 's')
-        {
-            printf("\nAguardando dados da FPGA...");
+        } else if (choice == 'r') {
+            printf("\nAguardando resposta da FPGA...");
             bytes_qty = receive_data(buffer);
             if (bytes_qty > 0)
             {
                 buffer[bytes_qty] = '\0';
-                printf("\nDados recebidos: %s", buffer);
+                printf("\n%dº byte recebido: %s", ++count_bytes_seq_rx, buffer);
+                // printf("\nQuantidade de bytes recebidos: %d", bytes_qty);
             }
             else
             {
                 printf("\nNenhum foi recebido!");
             }
         }
-        exit = dialog("\n\n\nRealizar outra ação, 's' ou 'n'? ");
+        exit = dialog("\nInsira 's' para realizar outra ação ou 'n' para finalizar o programa: ", 's', 'n');
     } while (exit == 's');
 
     printf("\nEncerrando conexão... Pressione Enter para sair do programa...\n");
