@@ -15,6 +15,7 @@ char getch()
     system("stty raw -echo");
     c = getchar();
     system("stty -raw echo");
+    printf("%c", c);
     return c;
 }
 
