@@ -63,6 +63,14 @@ void tx_hex(unsigned int hex_value)
     write(fd, &data, sizeof(data));
 }
 
+// char *rx_char(int uart_fd) 
+// {
+//     static char data[2]; // Define o array de caracteres para armazenar o byte lido
+//     read(uart_fd, &data[0], 1); // Lê 1 byte via UART
+//     data[1] = '\0'; // Adiciona o caractere nulo ao final do array
+//     return data; // Retorna o array de caracteres
+// }
+
 char *rx_char()
 {
     char *buffer = (char *)malloc(2); // Alocar memória para o byte lido e o terminador nulo
