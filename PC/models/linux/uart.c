@@ -50,9 +50,7 @@ void close_connection()
 
 void tx_char(char *data)
 {
-    unsigned char start_bit = 0;
-    write(fd, &start_bit, 1);
-    write(fd, data, strlen(data));
+    write(fd, data, 1);
 }
 
 void tx_hex(unsigned int hex_value)
@@ -77,9 +75,6 @@ char *rx_char()
     char *buffer = (char *)malloc(2); // Alocar memória para o byte lido e o terminador nulo
     if (buffer != NULL)
     {
-        // Aguardar um atraso antes de ler o byte
-        usleep(200000); // Recomendado: Atraso de 200 milissegundos
-
         // Receber dados da porta serial
         int numBytes = read(fd, buffer, 1); // Lê apenas 1 byte
         if (numBytes == 1)
