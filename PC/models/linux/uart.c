@@ -23,6 +23,7 @@ void configure_serial_port(int fd, speed_t baud_rate)
     options.c_cflag &= ~CSTOPB; // Define 1 bit de stop
     options.c_cflag &= ~CSIZE; // Limpa os bits de tamanho de caractere
     options.c_cflag |= CS8; // Define 8 bits de tamanho de caractere
+    tcflush(fd, TCIFLUSH); // Limpa o buffer de entrada do dispositivo
     tcsetattr(fd, TCSANOW, &options); // Registra as novas configurações da porta serial
 }
 
