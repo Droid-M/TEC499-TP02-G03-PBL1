@@ -8,7 +8,7 @@ int sleep_micros(unsigned long long us);
 // number_helpers.c
 int hex_to_decimal(int hex_value);
 float build_float(int integer, int decimal);
-int random_decimal(int max_value);
+int random_integer(int min_value, int max_value);
 int random_hexa(int hexa_digits_qty);
 
 // input_helpers.c
@@ -18,6 +18,7 @@ void input(char *message, const char *format, ...);
 void input_d(char *message, int *buffer, int max_size);
 void input_x(char *message, int *buffer, int max_size);
 char input_char();
+char dialog(char *dialogMessage, const char option1, const char option2);
 
 // output_helpers.c
 void slowed_printf(char *to_print, float delay_seconds);

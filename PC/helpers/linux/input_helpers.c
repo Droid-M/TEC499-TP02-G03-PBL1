@@ -185,3 +185,15 @@ void pause_program(char *message)
         // Lê e descarta os caracteres até que seja pressionada a tecla Enter
     }
 }
+
+char dialog(char *dialogMessage, const char option1, const char option2)
+{
+    printf("%s", dialogMessage);
+    char choice = input_char();
+    while (choice != option1 && choice != option2)
+    {
+        printf("\nOpção inválida! %s", dialogMessage);
+        choice = input_char();
+    }
+    return choice;
+}
