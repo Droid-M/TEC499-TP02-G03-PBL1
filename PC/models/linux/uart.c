@@ -15,17 +15,15 @@ void configure_serial_port(int fd, speed_t baud_rate)
 {
     struct termios options;
 
-    // Obter as configurações atuais da porta serial
-    tcgetattr(fd, &options);
-
-    // Configurar velocidade de leitura (entrada) e escrita (saída)
-    cfsetispeed(&options, baud_rate);
-    cfsetospeed(&options, baud_rate);
-
-    // Configurar opções da porta serial...
-
-    // Definir as configurações da porta serial
-    tcsetattr(fd, TCSANOW, &options);
+    tcgetattr(fd, &options); // Obtém as configurações atuais da porta serial
+    cfsetispeed(&options, baud_rate); // Configura a velocidade de leitura
+    cfsetospeed(&options, baud_rate); // Configura a velocidade de escrita
+    options.c_cflag |= (CLOCAL | CREAD); // Habilita a leitura e escrita no dispositivo UART
+    options.c_cflag &= ~PARENB; // Desabilita a paridade
+    options.c_cflag &= ~CSTOPB; // Define 1 bit de stop
+    options.c_cflag &= ~CSIZE; // Limpa os bits de tamanho de caractere
+    options.c_cflag |= CS8; // Define 8 bits de tamanho de caractere
+    tcsetattr(fd, TCSANOW, &options); // Registra as novas configurações da porta serial
 }
 
 int open_connection()
