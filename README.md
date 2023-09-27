@@ -1,225 +1,146 @@
-## TEC499-TP02-G03-PBL1
+## Problema #1 – Interfaces de E/S
 
-    Projeto de Sensor Digital em FPGA utilizando Comunicação Serial.
+**Projeto:** Sensor Digital em FPGA utilizando Comunicação Serial
+
+**Instituição:** Universidade Estadual de Feira de Santana (UEFS)
+
+**Curso:** Engenharia de computação
+
+**Disciplina:** TEC499 MI - Sistemas digitais
+
+**Turma:** TP02
+
+**Semestre:** 2023.2
+
+**Equipe:** 
+
+* Jeferson Almeida da Silva Ribeiro
+* João Vítor Cedraz Carneiro
+* Marcos Vinícius Ferreira dos Santos
+* Wesley Ramos
 
 ---
 
-### Observações durante o desenvolvimento
+### 1\. Introdução
+
+    O mercado de internet das coisas está se expandindo rapidamente. Visando a introdução dos alunos nesse mercado e que eles possam obter a experiência fundamental para a formação de um profissional de computação, foi submetido a esses alunos que realizassem um projeto onde trabalhariam com a prototipação de um sensor de temperatura e umidade. Para tal, fez-se uso dos equipamentos disponibilizados em laboratório como a FPGA, o sensor de temperatura e umidade DHT11, dispositivo de comunicação UART e computadores desktop.
+
+    Este relatório traz um resumo do que foi desenvolvido e um registro das experiências e resultados obtidos, considerando as falhas e os acertos.
+
+---
+
+### 2\. Metodologia
+
+    Como descrito na introdução, alguns dispositivos presentes no laboratório foram usados durante a implementação da solução do problema. Não foi possível consultar mais detalhes sobre cada dispositivo, mas as especificações e informações principais que conseguimos reunir durante o desenvolvimento foram:
+
+* O sistema operacional usado nos computadores foi o Linux Ubuntu 64 bits.
+* O programa usado para desenvolver, compilar, descarregar e simular os códigos para a FPGA foi o Quartus II v. 22.1 - prime edition.
+* A FPGA usada foi a Cyclone IV.
+* O dispositivo de comunicação UART operou na faixa de 9600 bauds por segundo.
+* O sensor de temperatura e umidade usado foi o DHT11 (versão de 3 pinos).
+
+    Passada a etapa de levantamento de informações sobre os dispositivos que utilizaríamos, a próxima etapa foi estabelecer um plano de desenvolvimento. Os tópicos a seguir abordarão essa etapa com mais descritividade.
+
+#### 2.1. Protocolo
+
+    Antes de preparar os algoritmos de comunicação e transferência de dados foi preciso entender quais e que tipo de dados serão transmitidos. Por recomendação do tutor, adotamos um protocolo de comunicação, que descreve detalhadamente como seria a comunicação entre o computador (PC) e a FPGA respeitando os padrões do protocolo UART.
+
+    Para consultar nosso protocolo de comunicação, por favor, acesse [https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/docs/Protocol](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/docs/Protocol).
+
+#### 2.2. Programa em C
+
+    O programa em C contou com a biblioteca [_**termios**_](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html) e a [_**unistd**_](https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/unistd.h) para transmitir e receber dados via UART. Como estamos lidando com 10 bits (1 de início + 8 de dados + 1 de parada), houve a necessidade de ajustar as configurações padrões do programa para que a paridade não fosse incluída e que apenas 1 bit de parada fosse considerado (ao invés de 2). 
+
+    O programa em C está configurado para ler (`rx_char`) e transmitir (`tx_char`) 1 byte por vez, conforme as funções abaixo:
+
+```c
+char *rx_char()
+{
+char *buffer = (char *)malloc(2); // Alocar memória para o byte lido e o terminador nulo
+if (buffer != NULL)
+{
+// Receber dados da porta serial
+int numBytes = read(fd, buffer, 1); // Lê apenas 1 byte
+if (numBytes == 1)
+{
+buffer[1] = '\0'; // Adicionar o terminador nulo
+return buffer;
+}
+...
+}
+...
+}
+
+void tx_char(char *data)
+{
+write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data'
+}
+```
+
+    A porta usada para o dispositivo UART no PC foi a “**ttyS0”.**
+
+#### 2.3. Programa em verilog
+
+    Ao todo, foram desenvolvidos 11 módulos em verilog obedecendo ao princípio de responsabilidade única. Dentre esses, os módulos principais são:
+
+1. **Controlador de requisição**: Trata as requisições enviadas pelo PC.
+2. **Controlador de resposta:** Agrupa e valida os dados obtidos do sensor com informações internas (no caso de leitura contínua).
+3. **TX:** Envia as informações obtidas pelo controlador de resposta para o PC de forma serial (bit a bit).
+4. **RX:** Recebe bit por bit a partir do sinal de início (start bit) e passa e as informações para o controlador de requisição.
+5. **DHT11:** Responsável por consultar e tratar os dados do sensor de temperatura e umidade.
+
+    A figura abaixo ilustra os módulos presentes no programa feito para a FPGA e sua estrutura básica.
+ 
+
+![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/a8bee437f99d75c621840a0e26134d67caf6f345660c5ce8.png)
+
+#####                                                                                         **Figura 1.** Módulos verilog
+
+    Resumidamente, os módulos representados na figura 1 se relacionam conforme o seguinte fluxo:
+
+1. _**IHM**_ (código em C) manda 1 bytes para o _**RX**_ (FPGA). Ele fara isso 2 vezes por ciclo de funcionamento do projeto.
+2. O _**Rx**_ processa os dados pegando bit a bit e concatenando num vetor _**RxData**_ de 8 posições deslocando o dígito menos significativo (_LSB_) para direita. Concluindo a leitura dos 8 bits, o _**RxDone**_ sinaliza que todos os bits foram recebidos (indo para o nível lógico alto).
+3. O _**RxDone**_ serve como indicador de início do controle do protocolo (controlador de requisição). Ele vai capturar os 8 bits de dados e usá-los para o comando de requisição passando uma variável de 4 bits para o módulo **C**_**ontrol**_ e o **C**_**ontrolAux**_.
+4. O módulo _**Control**_ é o responsável por capturar o dado do sensor, mas ele não será usado nessa primeira leva de dados.
+5. Nesta parte o módulo **C**_**ontrolAux**_ é executado, pois o _response **Counter**_ identificará que se trata do primeiro bit de dados graças à sua máquina de estados.
+6. O _response **Counter**_ recebe o _**DoneCtrl**_ e o _**DoneAux**_ que informam quando os dados forem enviados para a próxima fase. 
+7. O _**ContEn**_ é responsável por ativar o sensoriamento continuo e também por permitir a transmissão dos dois bytes de dados que constituem a requisição e a medida solicitada.
+8. Nesta primeira etapa o _**ResponseCounter**_ entra em estado de suspensão e envia o byte de comando de resposta, além de avisar se o sensoriamento continuo está ativo e se a transmissão foi finalizada.
+9. Esse sinal de finalização da transmissão enviado pelo _**ResponseCounter**_ serve para que o módulo transmissor da UART possa enviar dados bit a bit partindo _LSB_ para o _MSB_.
+10. Quando a transmissão acaba, o sinal de finalização do _**Tx**_ é acionado. Esse dado serve como um gatilho para o _**ResponseCounter**_ sair do modo de suspensão e ir para a segunda parte da máquina de estados. 
+11. A máquina de estados envia o sinal lido no sensor, transmite esse sinal e repete o ciclo inicial a partir da interface.
+12. O sensor é selecionado por um módulo à parte que está conectado a 32 pinos da GPIO. 
+13. O módulo contínuo manda um sinal ao módulo _**DHT11**_ para que ele consulte várias vezes, num intervalo de 4 segundos, os dados no sensor selecionado.
+
+#### 2.4. Observações durante o desenvolvimento
 
 * O tamanho do _buffer_ pode interferir na velocidade de leitura dos bytes, assim como na quantidade de requisições de leitura por transmissão.
 * Na UART, lemos da direita para a esquerda (_MSB_ para _LSB_).
 
----
+#### 2.5. Dificuldades enfrentadas
 
-### Pacote de requisição: PC para FPGA
+#### 2.6. Testes e simulações
 
-    As requisições são compostas, no total, por 4 bytes separadas em 4 instantes (**cabeçalho, endereço do sensor, comando de requisição e rodapé**, respectivamente). Cada instante é retardado em 20 milissegundos com o intuito de respeitar o tempo em que a FPGA recebe, analisa e armazena os bits.
+    Para execução das simulações e testes do código verilog optamos pelo uso da ferramenta Quartus II. Entretanto, como se trata de um projeto com máquinas de estado complexas, o uso de _waveform_ se tornou praticamente inviável, nos restando apenas usar o recurso de visualização de máquinas de estado para executar a simulação _in software_. 
 
-    O **cabeçalho** serve como um indicador do início do protocolo. Assim que a FPGA receber o valor `11111111` correspondente ao valor do cabeçalho, ela deve se preparar para capturar o endereço do sensor no próximo instante. No ato de “se preparar”, a FPGA deve descartar quaisquer valores remanescentes de outras operações, ignorando qualquer outro comando que esteja em execução no momento (por exemplo, mesmo que a FPGA esteja em monitoramento contínuo, assim que ela receber o byte de cabeçalho, ela deve parar o monitoramento contínuo imediatamente, seja ele de temperatura ou umidade).
+    Abaixo estão algumas capturas das visualizações de máquinas de estado.
 
-    O **endereço do sensor** é limitado na faixa de bits entre `00000001` e `00100000` (1 até 32). O endereço do sensor é uma informação que deve ser usada somente para decidir de qual sensor a FPGA deve consultar os dados. 
+![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/7a31baf68a4441868031316cd83c15e99eade64aa96baf79.png)
 
-    O **comando de requisição** corresponde à operação que a FPGA fará. No protocolo implementado neste projeto, o usuário, através da interface do menu poderá informar 8 códigos de comando diferentes (de `0x01` até `0x08`), entretanto, apenas 6 desses códigos serão transmitidos para a FPGA. Isto porque os dois últimos códigos de comando do protocolo (`0x07` e `0x08`) nada mais são do que um complemento dos códigos `0x01` e `0x02` (consulta de temperatura e consulta de umidade, respectivamente) com o diferencial de que os dados são consultados e exibidos em loop constante até a interrupção manual do usuário. 
+##### **Figura 2.** Máquina de estado do controle de protocolo
 
-    O **rodapé** serve como um indicador de fim de protocolo. Se a FPGA receber no instante 4 qualquer valor binário diferente de `01111111`, automaticamente ela descarta os 3 bytes registrados anteriormente e volta ao estado _IDLE_. Enquanto o 4º byte referente ao rodapé não for enviado, a FPGA vai permanecer em espera. Passado qualquer valor no 4º byte que seja diferente de `01111111`, a FPGA imediatamente deve devolver um **status** de erro para o PC.
+![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/aecc84f9f7716af6db05ae63c1e46e95c5c4a7437165c80b.png)
 
-Abaixo está a tabela de **pacotes de requisição:**
+##### **Figura 3.** Máquina de estado do controle auxiliar
 
-<table>
-    <tbody>
-        <tr>
-            <td><strong>Comando de requisição associado</strong></td>
-            <td><strong>Cabeçalho</strong></td>
-            <td><strong>Endereço do sensor</strong></td>
-            <td><strong>Comando de requisição</strong></td>
-            <td><strong>Rodapé</strong></td>
-        </tr>
-        <tr>
-            <td>Solicita a situação atual do sensor</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x00</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Solicita a medida de temperatura atual</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x01</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Solicita a medida de umidade atual</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x02</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Ativa sensoriamento contínuo de temperatura</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x03</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Ativa sensoriamento contínuo de umidade</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x04</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Desativa sensoriamento contínuo de temperatura</td>
-            <td><code>0xFF</code></td>
-            <td>&nbsp;</td>
-            <td><code>0x05</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Desativa sensoriamento contínuo de umidade</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x06</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Exibe o sensoriamento contínuo de temperatura</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x07</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-        <tr>
-            <td>Exibe o sensoriamento contínuo de umidade</td>
-            <td><code>0xFF</code></td>
-            <td>(Entre <code>0x01</code> e <code>0x20</code>)</td>
-            <td><code>0x08</code></td>
-            <td><code>0x7F</code></td>
-        </tr>
-    </tbody>
-</table>
+![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/c789853877218167d11f468aed9765c9eec219f93157bd1c.png)
+
+##### **Figura 4.** Máquina de estado do _response counter_
+
+     O código em C que desenvolvemos também possui um [sistema de simulação](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/PC/models/linux/fake_uart.c). O intuito da simulação no código em C foi facilitar o desenvolvimento nos momentos em que o dispositivo UART e a FPGA não estavam disponíveis e havia necessidade de validar o fluxo do programa e a implementação do protocolo (mencionado no tópico 2.1 deste relatório). Desta forma, geramos uma função que gera valores binários/hexadecimais aleatórios e tratamos esses valores no programa em C como se estivéssemos tratando valores enviados por uma FPGA real.
 
 ---
 
-### Pacote de resposta: FPGA para PC
+### Conclusão
 
-    As respostas são compostas por 8 bytes no total. A composição essencial dos bytes que formam a resposta é dada por: **cabeçalho, status, endereço do sensor, comando de resposta, dados\* e rodapé**.
-
-    Assim como no pacote de requisição, o **cabeçalho** no pacote de resposta serve como um indicador do início do protocolo. Após o envio do pacote de requisição e a pausa de 20 milissegundos, o PC lê o primeiro byte do _buffer_, que a princípio é o primeiro byte do pacote de resposta da FPGA. Se o byte lido for diferente de `11111111` significa que houve algum problema na comunicação. Nesse caso, o usuário deve ser notificado do problema ou o pacote de requisição deve ser reenviado.
-
-    O **status** indica se a FPGA conseguiu interpretar adequadamente o pacote de requisição enviado pelo PC, ou seja, indica se: 
-
-* Todos os 4 bytes de requisição foram lidos corretamente (a começar pelo byte de cabeçalho).
-* O sensor ao qual se quer consultar está acessível (isto porque pode acontecer de o byte referente ao endereço do sensor estar fora da faixa de `00000001` à `00100000` ou acontecer de alguma lógica interna do código verilog bloquear o acesso ao sensor no momento).
-* O comando enviado pelo PC está na lista de comandos previamente definida na FPGA através do código verilog (pois pode acontecer de, por exemplo, o byte referente ao comando ser enviado como `00011000`, que não está na lista).
-* O valor correto do rodapé foi enviado no 4º instante/byte (pois poderia acontecer de o 4º byte ser qualquer valor diferente de `01111111`).
-
-    O **endereço do sensor** é uma informação que serve apenas para que o PC saiba a qual sensor atribuir os dados que estão sendo enviados pela UART, então é obrigatório que o valor retornado no byte referente ao endereço do sensor seja o mesmo valor recebido pela FPGA no pacote de requisição mais recente efetuado pelo PC.
-
-    Cada pacote de resposta terá um byte pivô chamado **comando de resposta**. Será através dele que o PC poderá analisar e supor o estado interno da FPGA (por exemplo, através do comando de resposta `00001100` é possível saber que a FPGA estará lendo o sensor e enviando os dados de temperatura que obter diretamente para o PC).  
-
-    Diferente do status, endereço do sensor e do rodapé compostos por 1 byte, os **dados** são compostos por 3 bytes. A necessidade de 3 bytes se faz presente nos pacotes de requisição que requerem o retorno do valor da temperatura e/ou umidade lida pelo sensor. Nesses casos, os bytes de dados são preenchidos e enviados respeitando a seguinte ordem:
-
-1. Dado1: byte que informa se o sensor está funcionando (quando o comando de requisição for `0x00`) ou byte que informa a parte inteira do valor da temperatura ou da umidade (quando o comando de requisição for `0x01` ou `0x02`, por exemplo).
-2. Dado2: byte que informa a parte decimal (quando o comando de requisição for `0x01` ou `0x02`, por exemplo).
-3. Dado3: byte que informa se os dados lidos no sensor (quando o comando de requisição for `0x01` ou `0x02`, por exemplo) passaram na validação checksum, sendo `00000001` para “sucesso” e `00000000` para “falha”. Através desse byte o PC vai ter ciência de que os dados de temperatura ou umidade recebidos estão incorretos, podendo notificar o usuário acerca disso ou apenas solicitar uma nova leitura.
-
-    O **rodapé** serve apenas para informar ao PC que a resposta chegou ao fim. Desta forma, quando o PC receber qualquer valor no 8º instante/byte que seja diferente de `01111111`, ele deve interpretar que houve alguma falha na transmissão ou recepção dos dados e, a partir daí, notificar o usuário sobre o ocorrido.
-
-    Foi mencionado em um tópico anterior que o PC esperará em torno de 20 milissegundos para o envio de cada byte do protocolo a partir do momento em que o byte de cabeçalho for enviado para que a FPGA possa armazenar e/ou tratar cada byte com a segurança de que não haverá perda de dados. Porém, a FPGA não fará pausas durante o envio dos bytes de resposta, pois todos os bytes enviados são salvos em _buffer_ no PC e isso garante que a FPGA possa enviar uma grande taxa de bytes quase que indeterminadamente e nenhum deles será perdido. Entretanto, o mesmo não poderia ser feito do PC para a FPGA, pois o limite de bytes que ela suporta armazenar é muito menor em comparação ao PC e, eventualmente ocorreria uma perda de bits recebidos por não haver mais lugar para armazená-los.
-
-    Abaixo está a tabela de **pacotes de resposta:**
-
-<table>
-    <tbody>
-        <tr>
-            <td><strong>Comando de requisição associado</strong></td>
-            <td><strong>Cabeçalho</strong></td>
-            <td><strong>Status</strong></td>
-            <td><strong>Endereço do sensor</strong></td>
-            <td><strong>Comando de resposta</strong></td>
-            <td><strong>Data1</strong></td>
-            <td><strong>Data2</strong></td>
-            <td><strong>Data3</strong></td>
-            <td><strong>Rodapé</strong></td>
-        </tr>
-        <tr>
-            <td>Solicita a situação atual do sensor</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00011111</code> (sensor com problema) ou <code>00000111</code> (sensor funcionando corretamente)</td>
-            <td><code>00011111</code> (sensor com problema) ou <code>00000111</code> (sensor funcionando perfeitamente)</td>
-            <td><code>00000000</code></td>
-            <td><code>00000000</code></td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Solicita a medida de temperatura atual</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001001</code> (medida de temperatura)</td>
-            <td>(qualquer valor binário que corresponda à parte inteira do valor de temperatura medido)</td>
-            <td>(qualquer valor binário que corresponda à parte decimal do valor de temperatura medido)</td>
-            <td><code>00000001</code> (passou na validação do checksum) ou <code>00000000</code> (falhou na validação do checksum)&nbsp;</td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Solicita a medida de umidade atual</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001000</code> (medida de umidade)</td>
-            <td>(qualquer valor binário que corresponda à parte inteira do valor de umidade medido)</td>
-            <td>(qualquer valor binário que corresponda à parte decimal do valor de umidade medido)</td>
-            <td><code>00000001</code> (passou na validação do checksum) ou <code>00000000</code> (falhou na validação do checksum)&nbsp;</td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Ativa sensoriamento contínuo de temperatura</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001100</code> (confirmação de ativação do sensoriamento contínuo de temperatura)</td>
-            <td>(qualquer valor binário que corresponda à parte inteira do valor de temperatura medido)</td>
-            <td>(qualquer valor binário que corresponda à parte decimal do valor de temperatura medido)</td>
-            <td><code>00000001</code> (passou na validação do checksum) ou <code>00000000</code> (falhou na validação do checksum)&nbsp;</td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Ativa sensoriamento contínuo de umidade</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001101</code> (confirmação de ativação do sensoriamento contínuo de umidade)</td>
-            <td>(qualquer valor binário que corresponda à parte inteira do valor de umidade medido)</td>
-            <td>(qualquer valor binário que corresponda à parte decimal do valor de umidade medido)</td>
-            <td><code>00000001</code> (passou na validação do checksum) ou <code>00000000</code> (falhou na validação do checksum)&nbsp;</td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Desativa sensoriamento contínuo de temperatura</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001010</code> (confirmação de desativação do sensoriamento contínuo de temperatura)</td>
-            <td><code>00001010</code></td>
-            <td><code>00000000</code></td>
-            <td><code>00000000</code></td>
-            <td><code>01111111</code></td>
-        </tr>
-        <tr>
-            <td>Desativa sensoriamento contínuo de umidade</td>
-            <td><code>11111111</code></td>
-            <td><code>00000001</code> (sucesso na interpretação do pacote de requisição) ou <code>00000000</code> (falha na interpretação do pacote de requisição)</td>
-            <td>Entre <code>00000001</code> e <code>00100000</code></td>
-            <td><code>00001011</code>(confirmação de desativamento do sensoriamento contínuo de umidade)&nbsp;</td>
-            <td><code>00001011</code></td>
-            <td><code>00000000</code></td>
-            <td><code>00000000</code></td>
-            <td><code>01111111</code></td>
-        </tr>
-    </tbody>
-</table>
+---
