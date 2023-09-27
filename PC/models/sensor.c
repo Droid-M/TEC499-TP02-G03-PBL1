@@ -66,10 +66,10 @@ struct Sensor *get_sensors()
 void sent_request_package(struct Sensor *sensor)
 {
     /* -------------------------- Início do Pacote de requisição -------------------------- */
-    start_protocol(sensor);
+    // start_protocol(sensor);
     tx_hex(sensor->address);
     tx_hex(sensor->command);
-    end_protocol(sensor);
+    // end_protocol(sensor);
     /* ------------------------ Fim do Pacote requisição ------------------------ */
 }
 
@@ -82,14 +82,14 @@ int *receive_response_package(struct Sensor *sensor)
     int *data = (int *)malloc(3 * sizeof(int)); // Aloca memória para o array "data"
     int footer;
     /* ---------------------- Início do Pacote de resposta ---------------------- */
-    header = rx_int();
-    status = rx_int();
-    address = rx_int();
+    // header = rx_int();
+    // status = rx_int();
+    // address = rx_int();
     command = rx_int();
     data[0] = rx_int();
-    data[1] = rx_int();
-    data[2] = rx_int(); // situation
-    footer = rx_int();
+    // data[1] = rx_int();
+    // data[2] = rx_int(); // situation
+    // footer = rx_int();
     /* ------------------------ Fim do pacote de resposta ----------------------- */
     check_response(sensor, header, status, command, footer, address);
     return data;
@@ -107,7 +107,7 @@ void get_sensor_temperature(struct Sensor *sensor)
     sent_request_package(sensor);
     int *data = receive_response_package(sensor);
     if (has_integrity(sensor))
-        sensor->temperature = build_float(data[0], data[1]);
+        sensor->temperature = build_float(data[0], 0);
 }
 
 void get_sensor_humidity(struct Sensor *sensor)
@@ -115,7 +115,7 @@ void get_sensor_humidity(struct Sensor *sensor)
     sent_request_package(sensor);
     int *data = receive_response_package(sensor);
     if (has_integrity(sensor))
-        sensor->humidity = build_float(data[0], data[1]);
+        sensor->humidity = build_float(data[0], 0);
 }
 
 void get_sensor_situation(struct Sensor *sensor)
