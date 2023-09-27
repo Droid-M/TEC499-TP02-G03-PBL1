@@ -45,7 +45,7 @@
 
     Antes de preparar os algoritmos de comunicação e transferência de dados foi preciso entender quais e que tipo de dados serão transmitidos. Por recomendação do tutor, adotamos um protocolo de comunicação, que descreve detalhadamente como seria a comunicação entre o computador (PC) e a FPGA respeitando os padrões do protocolo UART.
 
-    Para consultar nosso protocolo de comunicação, por favor, acesse [https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/docs/Protocol](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/docs/Protocol).
+    Para consultar nosso protocolo de comunicação, por favor, acesse [https://github.com/Droid-M/TEC499-TP02-G03-PBL1/blob/main/Docs/Protocol.md](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/blob/main/Docs/Protocol.md).
 
 #### 2.2. Programa em C
 

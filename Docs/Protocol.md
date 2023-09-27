@@ -1,3 +1,5 @@
+## Protocolo de comunicação
+
 ### Pacote de requisição: PC para FPGA
 
     As requisições são compostas, no total, por 2 bytes separadas em 2 instantes (**endereço do sensor e comando de requisição,** respectivamente). Cada instante é retardado em 20 milissegundos com o intuito de respeitar o tempo em que a FPGA recebe, analisa e armazena os bits.
