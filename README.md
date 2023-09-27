@@ -140,7 +140,7 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
 ##### **Figura 4.** Máquina de estado do _response counter_
 
-     O código em C que desenvolvemos também possui um [sistema de simulação](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/PC/models/linux/fake_uart.c). O intuito da simulação no código em C foi facilitar o desenvolvimento nos momentos em que o dispositivo UART e a FPGA não estavam disponíveis e havia necessidade de validar o fluxo do programa e a implementação do protocolo (mencionado no tópico 2.1 deste relatório). Desta forma, geramos uma função que gera valores binários/hexadecimais aleatórios e tratamos esses valores no programa em C como se estivéssemos tratando valores enviados por uma FPGA real.
+     O código em C que desenvolvemos também possui um [sistema de simulação](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/PC/models/linux/fake_uart.c). O intuito da simulação no código em C foi facilitar o desenvolvimento nos momentos em que o dispositivo UART e a FPGA não estavam disponíveis e havia necessidade de validar o fluxo do programa e a implementação do protocolo (mencionado no tópico 2.1 deste relatório). Desta forma, criamos uma função que gera valores binários/hexadecimais aleatórios e tratamos esses valores no programa em C como se estivéssemos tratando valores enviados por uma FPGA real.
 
 ---
 
