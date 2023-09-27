@@ -56,9 +56,6 @@ void tx_char(char *data)
 void tx_hex(unsigned int hex_value)
 {
     uint8_t data = (uint8_t)hex_value;
-    unsigned char start_bit = 0;
-    sleep_micros(200000);
-    write(fd, &start_bit, 1);
     write(fd, &data, sizeof(data));
 }
 
