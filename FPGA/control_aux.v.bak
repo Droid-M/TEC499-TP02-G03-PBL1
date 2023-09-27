@@ -1,0 +1,64 @@
+module control_aux(clk, rst, Dado, done, En, Resp, sensorState);
+	input clk, rst, En, sensorState;
+	input [2:0] Dado;
+	output done;
+	output reg [7:0] resp;
+	
+	
+	parameter [2:0] status = 3'b000, temp = 3'b010, hum = 3'b011, tempC = 3'b110, humC = 3'b111; idle = 3'b101;
+	reg [2:0] state, next;
+	
+	
+	always @(posedge clk, negedge rst) begin
+		if(!rst) state = idle;
+		else state = next;
+	end
+	
+	
+	always @(En, done, Dado) begin
+		case(state) begin
+			idle: begin
+				if(En & done) begin
+					if(Dado == 3'b000) begin
+						done <= 1'b0;
+						next <= status;			
+					end
+					else if(Dado == 3'b010) begin
+						done <= 1'b0;
+						next <= temp;
+					end
+					else if(Dado == 3'b011) begin
+						done <= 1'b0;
+						next <= hum;
+					end
+					else if(Dado == 3'b110) begin
+						done <= 1'b0;
+						next <= tempC;
+					end
+					else if(Dado == 3'b111) begin
+						done <= 1'b0;
+						next <= humC;
+					end
+					else begin
+						next <= idle;
+					end
+				end
+				else begin
+					next = idle;
+				end
+			end
+			status: begin
+				if(!done) begin
+					if(sensorState) begin
+						resp <= 8'b00011111;
+					end
+					else begin
+						resp <= 8'00000111;
+					end
+				end
+			end
+		end
+	end
+
+
+endmodule
