@@ -1,10 +1,12 @@
-#include "helpers.h"
+#include "../helpers.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
+#include <windows.h>
 
 void slowed_printf(char *to_print, float delay_seconds)
 {
@@ -38,11 +40,6 @@ void skip_lines(int qty, int delay_per_line, char *line_content)
         fflush(stdout);
     }
 }
-
-#ifdef _WIN32
-
-#include <stdio.h>
-#include <windows.h>
 
 void c_log(const char *to_output, ...)
 {
@@ -100,43 +97,3 @@ void execute(const char *program_name, char *arguments[])
 
     free(command_line);
 }
-
-#else
-
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
-void c_log(const char *to_output, ...)
-{
-    va_list args;
-    va_start(args, to_output);
-    vprintf(to_output, args);
-    va_end(args);
-}
-
-void clear_console()
-{
-    system("clear");
-}
-
-void execute(const char *program_name, char *arguments[])
-{
-    pid_t child_pid = fork();
-
-    if (child_pid == -1)
-    {
-        exit(1);
-    }
-    else if (child_pid == 0)
-    {
-        // setsid();
-        execvp(program_name, arguments);
-    }
-    else
-    {
-        return;
-    }
-}
-
-#endif

@@ -14,7 +14,12 @@
         "windows.h": "c",
         "wait.h": "c",
         "cstdio": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "math.h": "c",
+        "constants.h": "c",
+        "types.h": "c",
+        "curses.h": "c",
+        "ipc.h": "c"
     },
     "cSpell.words": [
         "kbhit",

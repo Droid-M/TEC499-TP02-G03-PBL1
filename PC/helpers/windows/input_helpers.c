@@ -1,26 +1,11 @@
-#include "helpers.h"
+#include "../helpers.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
 #include <ctype.h>
-
-#ifdef _WIN32
-
 #include <windows.h> // Biblioteca para Windows
 #include <conio.h>
-
-#else
-
-#include <termios.h> // Biblioteca para Linux
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-#include <curses.h>
-
-#endif
-
-#ifdef _WIN32 // Versão para detectar entradas do teclado no windows
 
 int key_has_pressed()
 {
@@ -35,42 +20,6 @@ char input_char()
 {
     return getch();
 }
-
-#else // Versão para detectar entradas de teclado em sistemas Unix-like
-int key_has_pressed()
-{
-    struct termios oldt, newt;
-    int ch;
-    int oldf;
-
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-    ch = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-    if (ch != EOF)
-    {
-        ungetc(ch, stdin);
-        return 1;
-    }
-
-    return 0;
-}
-
-char input_char()
-{
-    return getch();
-}
-
-#endif
-
 
 void clear_input_buffer()
 {
@@ -176,6 +125,7 @@ char *secure_input(int max_size, char format)
 void input_d(char *message, int *buffer, int max_size)
 {
     printf("%s", message);
+    fflush(stdout);
     *buffer = atoi(secure_input(max_size, 'd'));
 }
 
@@ -183,6 +133,7 @@ void input_x(char *message, int *buffer, int max_size)
 {
     char *checker;
     printf("%s", message);
+    fflush(stdout);
     *buffer = strtol(secure_input(max_size, 'x'), &checker, 16);
 }
 
@@ -205,4 +156,16 @@ void pause_program(char *message)
     {
         // Lê e descarta os caracteres até que seja pressionada a tecla Enter
     }
+}
+
+char dialog(char *dialogMessage, const char option1, const char option2)
+{
+    printf("%s", dialogMessage);
+    char choice = input_char();
+    while (choice != option1 && choice != option2)
+    {
+        printf("\nOpção inválida! %s", dialogMessage);
+        choice = input_char();
+    }
+    return choice;
 }

@@ -38,8 +38,8 @@ int random_hexa(int hexa_digits_qty)
     return random_hexa;
 }
 
-int random_decimal(int max_value)
+int random_integer(int min_value, int max_value) 
 {
     srand(time(NULL));
-    return rand() % (max_value + 1);
+    return rand() % (max_value - min_value + 1) + min_value;
 }
