@@ -1,3 +1,6 @@
+// Os trechos de código a seguir foram adaptados do site https://electronoobs.com/eng_arduino_tut26.php
+// para fins de referência e aprendizado.
+
 /*Imagine that the baud rate you want to work with is 9600. The clock of my
 FPGA is 50MHz. If we want the "TICKS" to ahev 16 times the frequency of the UART signal
 we need a frequency 16 times the 9600Hz. 

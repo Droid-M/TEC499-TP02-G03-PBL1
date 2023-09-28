@@ -1,3 +1,6 @@
+// Os trechos de código a seguir foram adaptados do site https://electronoobs.com/eng_arduino_tut26.php
+// para fins de referência e aprendizado.
+
 module UART_rx (Clk,Rst_n,RxEn,RxData,RxDone,Rx,Tick,NBits);		//Define my module as UART_rs232_rx
 
 input Clk, Rst_n, RxEn,Rx,Tick;		//Define 1 bit inputs
