@@ -37,14 +37,14 @@ int open_connection()
         return 0;
     }
 
-    // Configurar a porta serial com baud rate de 9600
+    // Configura a porta serial com baud rate de 9600
     configure_serial_port(fd, B9600);
     return 1;
 }
 
 void close_connection()
 {
-    // Fechar a porta serial
+    // Fecha a porta serial
     close(fd);
 }
 
@@ -55,8 +55,10 @@ void tx_char(char *data)
 
 void tx_hex(unsigned int hex_value)
 {
-    uint8_t data = (uint8_t)hex_value;
-    write(fd, &data, sizeof(data));
+    // uint8_t data = (uint8_t)hex_value;
+    // write(fd, &data, sizeof(data));
+    unsigned char data = (char) hex_value;
+    write(fd, &data, 1);
 }
 
 // char *rx_char(int uart_fd) 
@@ -69,14 +71,14 @@ void tx_hex(unsigned int hex_value)
 
 char *rx_char()
 {
-    char *buffer = (char *)malloc(2); // Alocar memória para o byte lido e o terminador nulo
+    char *buffer = (char *)malloc(2); // Aloca memória para o byte lido e o terminador nulo
     if (buffer != NULL)
     {
-        // Receber dados da porta serial
+        // Recebe dados da porta serial
         int numBytes = read(fd, buffer, 1); // Lê apenas 1 byte
         if (numBytes == 1)
         {
-            buffer[1] = '\0'; // Adicionar o terminador nulo
+            buffer[1] = '\0'; // Adiciona o terminador nulo
             return buffer;
         }
         else
