@@ -24,6 +24,8 @@ float build_float(int integer, int decimal)
 {
     int digits_qty = (int)log10(decimal) + 1; // Conta o número de dígitos na parte decimal
     float divisor = pow(10, digits_qty);
+    if (divisor == 0)
+        divisor = 1;
     return (float)integer + ((float)decimal / divisor);
 }
 
