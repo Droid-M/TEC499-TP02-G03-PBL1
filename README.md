@@ -34,7 +34,7 @@
     Como descrito na introdução, alguns dispositivos presentes no laboratório foram usados durante a implementação da solução do problema. Não foi possível consultar mais detalhes sobre cada dispositivo, mas as especificações e informações principais que conseguimos reunir durante o desenvolvimento foram:
 
 *   O sistema operacional usado nos computadores foi o Linux Ubuntu 64 bits.
-*   O programa usado para desenvolver, compilar, descarregar e simular os códigos para a FPGA foi o Quartus II v. 22.1 - prime edition.
+*   O programa usado para desenvolver, compilar, descarregar e simular os códigos para a FPGA foi o Quartus II v. 20.1 - prime edition.
 *   A FPGA usada foi a Cyclone IV.
 *   O dispositivo de comunicação UART operou na faixa de 9600 bauds por segundo.
 *   O sensor de temperatura e umidade usado foi o DHT11 (versão de 3 pinos).
@@ -118,11 +118,13 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
 #### 2.5. Dificuldades enfrentadas
 
-    A maior dificuldade que enfrentamos foi a implementação do módulo responsável pelo controle do sensor DHT11. Os padrões de comportamento do sensor fogem totalmente do que estávamos habituados a trabalhar até então e, por mais que fosse fácil entendê-lo, a implementação foi um processo doloroso. Devido ao prazo de entrega que se aproximava, tivemos que optar por buscar soluções prontas à respeito do DHT11 na internet para análise e estudo.
+    A maior dificuldade que enfrentamos foi a implementação do módulo responsável pelo controle do sensor DHT11. Os padrões de comportamento do sensor fogem totalmente do que estávamos habituados a trabalhar até então e, por mais que fosse fácil entendê-lo, a implementação foi um processo doloroso. Devido ao prazo de entrega que se aproximava, tivemos que optar por buscar soluções prontas a respeito do DHT11 na internet para análise e estudo.
 
     Outra dificuldade que tivemos foi a implementação do protocolo (de requisição e de resposta) sincronizado. Houve um problema de comunicação entre os membros da equipe devido à divisão de responsabilidades então uma parte da equipe não estava totalmente ciente do que a outra parte desenvolvia até o momento de juntar todas as partes. O resultado foram funções divergentes cujas entradas e saídas não se conectavam. Então uma revisão de código foi necessária demandando mais tempo que o necessário para conclusão dessa etapa.
 
 #### 2.6. Testes e simulações
+
+    Na raiz do projeto existe um arquivo chamado “compile\_and\_execute\_codes.sh” responsável por automatizar o processo de compilação e execução do programa feito em _C_. Ao abrir esse arquivo num terminal (ou executá-lo diretamente em alguns sistemas operacionais), aparecerão 3 opções de arquivos para execução: “Menu principal”, “Testador simples” e “Sair”. A opção recomendada para quem deseja executar testes rápidos de conexão UART entre o PC e a FPGA é a opção 2 “Testador simples”. Para quem deseja executar o programa principal (parte da solução do problema 1), basta escolher a opção 1 “Menu principal”.
 
     Para execução das simulações e testes do código verilog optamos pelo uso da ferramenta Quartus II. Entretanto, como se trata de um projeto com máquinas de estado complexas, o uso de _waveform_ se tornou praticamente inviável, nos restando apenas usar o recurso de visualização de máquinas de estado para executar a simulação _in software_. 
 
@@ -146,8 +148,8 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
 ### Conclusão
 
-    O processo de desenvolvimento da solução para o problema trouxe consigo uma série de dificuldades, porém, acreditamos que cada obstáculo que nos deparamos (como novos protocolos de comunicação, processo de transferencia assíncrona, etc.) era mais uma forma de ampliar o conhecimento acerca deles. Também estamos satisfeitos em relação a maioria das ferramentas e conteúdo disponibilizados, porém, não houve orientação suficiente nos momentos mais críticos do desenvolvimento. E, talvez devido a isso, adotamos soluções errôneas ao longo do desenvolvimeto que poderiam ser evitadas de antemão, poupando tempo e esforços para a equipe. 
+    O processo de desenvolvimento da solução para o problema trouxe consigo uma série de dificuldades, porém, acreditamos que cada obstáculo que nos deparamos (como novos protocolos de comunicação, processo de transferência assíncrona, etc.) era mais uma forma de ampliar o conhecimento acerca deles. Também estamos satisfeitos em relação à maioria das ferramentas e conteúdo disponibilizados, porém, não houve orientação suficiente nos momentos mais críticos do desenvolvimento. E, talvez devido a isso adotamos soluções errôneas ao longo do desenvolvimento que poderiam ser evitadas de antemão, poupando tempo e esforços para a equipe. 
 
-    Quanto à solução do problema, conseguimos implementar tudo que foi estabelecido nos requisitos (protocolo, módulo de comunicação UART, consulta ao sensor DHT11, interface de interação do usuário, etc.). Mas não conseguimos produzir uma solução 100% funcional, talvez por conta da desorientação ou pela falta de comunicação entre o grupo. O importante é que todos os conceitos trabalhados durante o problema 1 foram absorvidos com sucesso e temos ciência de que temos a capacidade de implementar soluções até mais complexas para o mercado IOT futuramente, a depender dos resursos e do planejamento.
+    Quanto à solução do problema, conseguimos implementar tudo que foi estabelecido nos requisitos (protocolo, módulo de comunicação UART, consulta ao sensor DHT11, interface de interação do usuário, etc.). Mas não conseguimos produzir uma solução 100% funcional, talvez por conta da desorientação ou pela falta de comunicação entre o grupo. O importante é que todos os conceitos trabalhados durante o problema 1 foram absorvidos com sucesso e temos ciência de que possuímos a capacidade de implementar soluções até mais complexas para o mercado Iot futuramente, a depender dos recursos e do planejamento.
 
 ---
