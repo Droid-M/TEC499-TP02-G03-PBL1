@@ -23,7 +23,7 @@
 
 ### 1\. Introdução
 
-    O mercado de internet (Iot) das coisas está se expandindo rapidamente. Visando a introdução dos alunos nesse mercado e que eles possam obter a experiência fundamental para a formação de um profissional de computação, foi submetido a esses alunos que realizassem um projeto onde trabalhariam com a prototipação de um sensor de temperatura e umidade. Para tal, fez-se uso dos equipamentos disponibilizados em laboratório como a FPGA, o sensor de temperatura e umidade DHT11, dispositivo de comunicação UART e computadores desktop.
+    O mercado de internet (Iot) das coisas está se expandindo rapidamente. Visando a introdução dos alunos nesse mercado e que eles possam obter a experiência fundamental para a formação de um profissional de computação, foi submetido a esses alunos que realizassem um projeto onde trabalhariam com a prototipação de um sensor de temperatura e umidade. Para tal, fez-se uso dos equipamentos disponibilizados em laboratório como a FPGA, o sensor de temperatura e umidade DHT11, dispositivo de comunicação UART e computadores desktops.
 
     Este relatório traz um resumo do que foi desenvolvido e um registro das experiências e resultados obtidos, considerando as falhas e os acertos.
 
@@ -104,7 +104,7 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 5.  Nesta parte o módulo **C**_**ontrolAux**_ é executado, pois o _response **Counter**_ identificará que se trata do primeiro bit de dados graças à sua máquina de estados.
 6.  O _response **Counter**_ recebe o _**DoneCtrl**_ e o _**DoneAux**_ que informam quando os dados forem enviados para a próxima fase. 
 7.  O _**ContEn**_ é responsável por ativar o sensoriamento continuo e também por permitir a transmissão dos dois bytes de dados que constituem a requisição e a medida solicitada.
-8.  Nesta primeira etapa o _**ResponseCounter**_ entra em estado de suspensão e envia o byte de comando de resposta, além de avisar se o sensoriamento continuo está ativo e se a transmissão foi finalizada.
+8.  Nesta primeira etapa o _**ResponseCounter**_ entra em estado de suspensão e envia o byte de comando de resposta, além de avisar se o sensoriamento contínuo está ativo e se a transmissão foi finalizada.
 9.  Esse sinal de finalização da transmissão enviado pelo _**ResponseCounter**_ serve para que o módulo transmissor da UART possa enviar dados bit a bit partindo _LSB_ para o _MSB_.
 10.  Quando a transmissão acaba, o sinal de finalização do _**Tx**_ é acionado. Esse dado serve como um gatilho para o _**ResponseCounter**_ sair do modo de suspensão e ir para a segunda parte da máquina de estados. 
 11.  A máquina de estados envia o sinal lido no sensor, transmite esse sinal e repete o ciclo inicial a partir da interface.
@@ -124,7 +124,7 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
 #### 2.6. Testes e simulações
 
-    Na raiz do projeto existe um arquivo chamado “compile\_and\_execute\_codes.sh” responsável por automatizar o processo de compilação e execução do programa feito em _C_. Ao abrir esse arquivo num terminal (ou executá-lo diretamente em alguns sistemas operacionais), aparecerão 3 opções de arquivos para execução: “Menu principal”, “Testador simples” e “Sair”. A opção recomendada para quem deseja executar testes rápidos de conexão UART entre o PC e a FPGA é a opção 2 “Testador simples”. Para quem deseja executar o programa principal (parte da solução do problema 1), basta escolher a opção 1 “Menu principal”.
+    Na raiz do projeto existe um arquivo chamado “compile\_and\_execute\_codes.sh” responsável por automatizar o processo de compilação e execução do programa feito em _C_. Ao abrir esse arquivo num terminal (ou executá-lo diretamente em alguns sistemas operacionais), aparecerão 3 opções de arquivos para execução: “Menu principal”, “Testador simples” e “Sair”. A opção recomendada para quem deseja executar testes rápidos de conexão UART entre o PC e a FPGA é a opção 2 “Testador simples”. Para quem deseja executar o programa principal, basta escolher a opção 1 “Menu principal”.
 
     Para execução das simulações e testes do código verilog optamos pelo uso da ferramenta Quartus II. Entretanto, como se trata de um projeto com máquinas de estado complexas, o uso de _waveform_ se tornou praticamente inviável, nos restando apenas usar o recurso de visualização de máquinas de estado para executar a simulação _in software_. 
 
@@ -142,7 +142,7 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
 ##### **Figura 4.** Máquina de estado do _response counter_
 
-     O código em C que desenvolvemos também possui um [sistema de simulação](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/PC/models/linux/fake_uart.c). O intuito da simulação no código em C foi facilitar o desenvolvimento nos momentos em que o dispositivo UART e a FPGA não estavam disponíveis e havia necessidade de validar o fluxo do programa e a implementação do protocolo (mencionado no tópico 2.1 deste relatório). Desta forma, criamos uma função que gera valores binários/hexadecimais aleatórios e tratamos esses valores no programa em C como se estivéssemos tratando valores enviados por uma FPGA real.
+     O código em _C_ que desenvolvemos também possui um [sistema de simulação](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/tree/main/PC/models/linux/fake_uart.c). O intuito da simulação no código em _C_ foi facilitar o desenvolvimento nos momentos em que o dispositivo UART e a FPGA não estavam disponíveis e havia necessidade de validar o fluxo do programa e a implementação do protocolo (mencionado no tópico 2.1 deste relatório). Desta forma, criamos uma função que gera valores binários/hexadecimais aleatórios e tratamos esses valores no programa em C como se estivéssemos tratando valores enviados por uma FPGA real.
 
 ---
 
@@ -153,3 +153,9 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
     Quanto à solução do problema, conseguimos implementar tudo que foi estabelecido nos requisitos (protocolo, módulo de comunicação UART, consulta ao sensor DHT11, interface de interação do usuário, etc.). Mas não conseguimos produzir uma solução 100% funcional, talvez por conta da desorientação ou pela falta de comunicação entre o grupo. O importante é que todos os conceitos trabalhados durante o problema 1 foram absorvidos com sucesso e temos ciência de que possuímos a capacidade de implementar soluções até mais complexas para o mercado Iot futuramente, a depender dos recursos e do planejamento.
 
 ---
+
+### Referências
+
+[https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html)  
+[https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/unistd.h](https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/unistd.h)  
+[https://electronoobs.com/eng_arduino_tut26.php](https://electronoobs.com/eng_arduino_tut26.php)
