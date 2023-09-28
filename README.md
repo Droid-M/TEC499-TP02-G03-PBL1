@@ -159,4 +159,4 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 [https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html)  
 [https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/unistd.h](https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/unistd.h)  
 [https://electronoobs.com/eng_arduino_tut26.php](https://electronoobs.com/eng_arduino_tut26.php)
-[https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/](https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/)
+[https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/](https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp.html)
