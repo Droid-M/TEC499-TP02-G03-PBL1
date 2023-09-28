@@ -21,7 +21,10 @@ int main(int argc, char *argv[])
     int sensor_command = atoi(argv[2]);
     time_t currentTime;
     struct tm *localTime;
+
+    // Registra o comando recebido para um sensor específico
     register_command(sensor_address, sensor_command);
+
     if (sensor_command == 0x07)
     {
         while (!key_has_pressed())
@@ -29,6 +32,8 @@ int main(int argc, char *argv[])
             sleep(1);
             time(&currentTime); // Obtém o tempo atual
             localTime = localtime(&currentTime);
+            
+            // Obtém a temperatura do sensor e exibe
             get_sensor_temperature(&sensors[sensor_address - 1]);
             printf("\nInstante %02d:%02d:%02d ----- ", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
             printf("Temperatura lida no sensor #%d: %.3f °C\n\n", sensors[sensor_address - 1].address, sensors[sensor_address - 1].temperature);
@@ -41,6 +46,8 @@ int main(int argc, char *argv[])
             sleep(1);
             time(&currentTime); // Obtém o tempo atual
             localTime = localtime(&currentTime);
+
+            // Obtém a umidade do sensor e exibe
             get_sensor_humidity(&sensors[sensor_address - 1]);
             printf("\nInstante %02d:%02d:%02d ----- ", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
             printf("Umidade lida no sensor #%d: %.3f%%\n\n", sensors[sensor_address - 1].address, sensors[sensor_address - 1].humidity);
@@ -52,7 +59,11 @@ int main(int argc, char *argv[])
         pause_program("pressione Enter para sair...");
         return 1;
     }
+
+    // Aguarda a entrada do usuário para sair
     pause_program("pressione Enter para sair...");
+
+    // Fecha a memória compartilhada antes de sair
     close_shared_memory();
     return 0;
 }

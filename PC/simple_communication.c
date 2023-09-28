@@ -29,8 +29,7 @@ int main()
         choice = dialog("\nInsira 't' para enviar algum byte ou 'r' para receber algum byte: ", 't', 'r');
         if (choice == 't') {
             count_bytes_seq_rx = 0;
-            // printf("\nInsira o %dº caractere a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
-            // data[0] = input_char();
+            // Solicita o byte a ser enviado em formato hexadecimal
             sprintf(message, "\nInsira o %dº caractere (em HEXADECIMAL) a ser enviado para a FPGA: ", ++count_bytes_seq_tx);
             input_x(message, &tx_bytes, 8);
             printf("\nEnviando '0x%X' (%d em decimal) para a FPGA...", tx_bytes, tx_bytes);
@@ -45,7 +44,7 @@ int main()
             }
             else
             {
-                printf("\nNenhum foi recebido!");
+                printf("\nNenhum byte foi recebido!");
             }
         }
         exit = dialog("\nInsira 's' para realizar outra ação ou 'n' para finalizar o programa: ", 's', 'n');
