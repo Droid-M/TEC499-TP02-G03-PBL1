@@ -91,7 +91,7 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
     A figura abaixo ilustra os módulos presentes no programa feito para a FPGA e sua estrutura básica.  
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/a8bee437f99d75c621840a0e26134d67caf6f345660c5ce8.png)
+![](https://raw.githubusercontent.com/Droid-M/TEC499-TP02-G03-PBL1/main/Docs/Images/Fluxo_do_PBL1SD.drawio_2.png)
 
 ##### **Figura 1.** Módulos verilog
 
@@ -130,15 +130,15 @@ write(fd, data, 1); // Envia apenas 1 byte independentemente do tamanho de 'data
 
     Abaixo estão algumas capturas das visualizações de máquinas de estado.
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/7a31baf68a4441868031316cd83c15e99eade64aa96baf79.png)
+![](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/blob/main/Docs/Images/Maquina%20de%20estado%20do%20controle%20de%20protocolo.png?raw=true)
 
 ##### **Figura 2.** Máquina de estado do controle de protocolo
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/aecc84f9f7716af6db05ae63c1e46e95c5c4a7437165c80b.png)
+![](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/blob/main/Docs/Images/Maquina%20de%20estado%20do%20controle%20auxiliar.png?raw=true)
 
 ##### **Figura 3.** Máquina de estado do controle auxiliar
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/c789853877218167d11f468aed9765c9eec219f93157bd1c.png)
+![](https://github.com/Droid-M/TEC499-TP02-G03-PBL1/blob/main/Docs/Images/Maquina%20do%20response%20counter.png?raw=true)
 
 ##### **Figura 4.** Máquina de estado do _response counter_
 
